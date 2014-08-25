@@ -1,4 +1,13 @@
-.gradle
+# Local confs
 /local.properties
+
+# Gradle
+.gradle
+/gradle
+
+# Android Studio
 /.idea/workspace.xml
-.DS_Store
+*/build/
+
+# Others
+*.DS_Store

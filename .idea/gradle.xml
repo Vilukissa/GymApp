@@ -9,6 +9,7 @@
           <set>
             <option value="F:\_Ohjelmointi\Android\GymApp" />
             <option value="F:\_Ohjelmointi\Android\GymApp\app" />
+            <option value="F:\_Ohjelmointi\Android\GymApp\volley" />
           </set>
         </option>
       </GradleProjectSettings>
