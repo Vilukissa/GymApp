@@ -8,6 +8,8 @@
 # Android Studio
 /.idea/workspace.xml
 */build/
+*.iml
 
 # Others
 *.DS_Store
+/volley
