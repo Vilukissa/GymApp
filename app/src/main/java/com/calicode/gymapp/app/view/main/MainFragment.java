@@ -2,17 +2,17 @@ package com.calicode.gymapp.app.view.main;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.calicode.gymapp.app.R;
+import com.calicode.gymapp.app.model.authentication.data.AuthenticationData;
 import com.calicode.gymapp.app.model.authentication.operation.AuthenticationOperation;
-import com.calicode.gymapp.app.network.JsonOperation;
-import com.calicode.gymapp.app.network.RequestError;
 import com.calicode.gymapp.app.network.VolleyHandler;
+import com.calicode.gymapp.app.network.customrequest.JsonOperation;
+import com.calicode.gymapp.app.network.customrequest.RequestError;
 
 public class MainFragment extends Fragment {
 
@@ -28,9 +28,6 @@ public class MainFragment extends Fragment {
             testLogin();
         }
     };
-
-    public MainFragment() {
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -53,9 +50,6 @@ public class MainFragment extends Fragment {
     }
 
     private void showError(String error) {
-        if (TextUtils.isEmpty(error)) {
-            error = "ERROR!";
-        }
         ((TextView) mErrorLayout.findViewById(R.id.errorText)).setText(error);
         mProgressLayout.setVisibility(View.GONE);
         mErrorLayout.setVisibility(View.VISIBLE);
@@ -68,12 +62,15 @@ public class MainFragment extends Fragment {
     }
 
     private void testLogin() {
-        AuthenticationOperation request = new AuthenticationOperation();
-        request.setOperationListener(new JsonOperation.OnOperationCompleteListener() {
+        AuthenticationOperation operation = new AuthenticationOperation();
+        operation.setOperationListener(new JsonOperation.OnOperationCompleteListener() {
+
             @Override
             public void onSuccess(Object data) {
                 ((TextView) mContentLayout.findViewById(R.id.authenticationStateText))
-                    .setText(getString(R.string.authenticated));
+                        .setText(getString(R.string.authenticated));
+                ((TextView) mContentLayout.findViewById(R.id.authenticationTokenText))
+                        .setText(((AuthenticationData) data).getAuthToken());
                 mAuthButton.setVisibility(View.GONE);
                 showContent();
             }
@@ -83,6 +80,7 @@ public class MainFragment extends Fragment {
                 showError(error.getMessage());
             }
         });
-        VolleyHandler.get().addToRequestQueue(request);
+
+        operation.execute();
     }
 }

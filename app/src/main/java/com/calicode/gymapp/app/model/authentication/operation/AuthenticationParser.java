@@ -2,16 +2,12 @@ package com.calicode.gymapp.app.model.authentication.operation;
 
 import com.calicode.gymapp.app.model.authentication.data.AuthenticationData;
 import com.calicode.gymapp.app.network.BaseParser;
-
-import org.json.JSONObject;
+import com.fasterxml.jackson.databind.ObjectReader;
 
 public class AuthenticationParser extends BaseParser {
 
     @Override
-    public Object parseObject(String json) throws Exception {
-        JSONObject jsonObject = new JSONObject(json);
-        AuthenticationData data = new AuthenticationData();
-        // TODO: parsing...
-        return data;
+    public Object parseObject(ObjectReader objectReader, String json) throws Exception {
+        return objectReader.withType(AuthenticationData.class).readValue(json);
     }
 }

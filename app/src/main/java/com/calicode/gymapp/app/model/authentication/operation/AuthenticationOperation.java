@@ -1,7 +1,8 @@
 package com.calicode.gymapp.app.model.authentication.operation;
 
 import com.android.volley.Request;
-import com.calicode.gymapp.app.network.JsonOperation;
+import com.calicode.gymapp.app.Config;
+import com.calicode.gymapp.app.network.customrequest.JsonOperation;
 import com.calicode.gymapp.app.util.Encryption;
 
 import java.util.HashMap;
@@ -27,8 +28,8 @@ public class AuthenticationOperation extends JsonOperation {
 
         // TODO: move these away
         // FIXME: very primitive implementation for the first test runs...
-        String privateKey = Encryption.md5("xxx");
-        String sharedKey = "lol1234";
+        String privateKey = Encryption.md5(Config.NOAHS_ARK);
+        String sharedKey = Encryption.generateSharedKey();
         String token = Encryption.md5(privateKey + sharedKey);
 
         params.put(AUTH_TOKEN_KEY, token);

@@ -1,6 +1,14 @@
 apply plugin: 'android'
 
 android {
+
+    // http://tools.android.com/tech-docs/new-build-system
+    // https://code.google.com/p/android/issues/detail?id=61573#c14
+    packagingOptions {
+        pickFirst 'META-INF/LICENSE'
+        pickFirst 'META-INF/NOTICE'
+    }
+
     compileSdkVersion 19
     buildToolsVersion '19.0.3'
 
@@ -21,6 +29,8 @@ android {
 dependencies {
     compile 'com.android.support:support-v4:19.1.0'
     compile 'com.android.support:appcompat-v7:+'
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile project(':volley')
+    compile files('libs/volley-1-0-6.jar')
+    compile files('libs/jackson-annotations-2-4-2.jar')
+    compile files('libs/jackson-core-2-4-2.jar')
+    compile files('libs/jackson-databind-2-4-2.jar')
 }

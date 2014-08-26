@@ -18,4 +18,8 @@ public class Encryption {
         }
         return sb.toString();
     }
+
+    public static String generateSharedKey() {
+        return "elephant_mother_and_father";
+    }
 }

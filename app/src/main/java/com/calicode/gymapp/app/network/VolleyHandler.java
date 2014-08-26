@@ -25,14 +25,8 @@ public class VolleyHandler {
         return mRequestQueue;
     }
 
-    @SuppressWarnings("unused")
-    public void clearCache(String url) {
-        Log.debug("Clearing cache by url: " + url);
-        getRequestQueue().getCache().remove(url);
-    }
-
-    public void addToRequestQueue(JsonOperation req) {
-        Request request = req.getRequest();
+    public void addToRequestQueue(Request request) {
+        Log.debug("Adding request to URL: " + request.getUrl());
         getRequestQueue().add(request);
     }
 }
