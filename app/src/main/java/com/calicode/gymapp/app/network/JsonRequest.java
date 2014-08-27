@@ -1,26 +1,23 @@
-package com.calicode.gymapp.app.network.customrequest;
+package com.calicode.gymapp.app.network;
 
 import com.android.volley.AuthFailureError;
-import com.android.volley.Cache;
 import com.android.volley.NetworkResponse;
-import com.android.volley.ParseError;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
-import com.android.volley.toolbox.JsonRequest;
-import com.calicode.gymapp.app.network.BaseParser;
 import com.calicode.gymapp.app.util.Log;
 
-import java.io.UnsupportedEncodingException;
+import org.json.JSONObject;
+
 import java.util.HashMap;
 import java.util.Map;
 
-public class CustomRequest extends JsonRequest {
+public class JsonRequest extends com.android.volley.toolbox.JsonRequest {
 
-    private BaseParser mParser;
+    private JsonParser mParser;
     private JsonOperation.OnOperationCompleteListener mListener;
 
-    public CustomRequest(int method, String url, String requestBody, BaseParser parser) {
+    public JsonRequest(int method, String url, String requestBody, JsonParser parser) {
         super(method, url, requestBody, null, null);
         mParser = parser;
     }
@@ -32,15 +29,18 @@ public class CustomRequest extends JsonRequest {
     @Override
     protected Response parseNetworkResponse(NetworkResponse response) {
         try {
-            Log.debug("Trying to parse response");
-
             String json = new String(response.data,
                     HttpHeaderParser.parseCharset(response.headers));
-            return Response.success(mParser.tryParse(json),
-                    HttpHeaderParser.parseCacheHeaders(response));
 
-        } catch (UnsupportedEncodingException e) {
-            return Response.error(new ParseError(e));
+            Log.debug("Response from " + getUrl() + " => " + new JSONObject(json).toString());
+            Log.debug("Trying to parse response");
+
+            Object dataObject = mParser.tryParse(json);
+
+            return Response.success(dataObject, HttpHeaderParser.parseCacheHeaders(response));
+
+        } catch (Exception e) {
+            return Response.error((VolleyError) e);
         }
     }
 
@@ -48,12 +48,7 @@ public class CustomRequest extends JsonRequest {
     protected void deliverResponse(Object response) {
         if (mListener != null) {
             Log.debug("Delivering response to listener");
-
-            if (response instanceof RequestError) {
-                mListener.onFailure((RequestError) response);
-            } else {
-                mListener.onSuccess(response);
-            }
+            mListener.onSuccess(response);
         } else {
             Log.error("Lost the operation listener");
         }
@@ -61,8 +56,8 @@ public class CustomRequest extends JsonRequest {
 
     @Override
     public void deliverError(VolleyError error) {
-        // Callback for common errors and possible connection errors
-        // see the implementation of CustomRequest.parseNetworkResponse!
+        Log.debug("Error from " + getUrl() + " => " + error.toString());
+
         if (mListener != null) {
             Log.debug("Delivering error to listener");
             mListener.onFailure(new RequestError(error));

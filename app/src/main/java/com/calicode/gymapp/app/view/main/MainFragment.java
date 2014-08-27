@@ -8,11 +8,12 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.calicode.gymapp.app.R;
-import com.calicode.gymapp.app.model.authentication.data.AuthenticationData;
-import com.calicode.gymapp.app.model.authentication.operation.AuthenticationOperation;
-import com.calicode.gymapp.app.network.VolleyHandler;
-import com.calicode.gymapp.app.network.customrequest.JsonOperation;
-import com.calicode.gymapp.app.network.customrequest.RequestError;
+import com.calicode.gymapp.app.model.OperationCreator;
+import com.calicode.gymapp.app.model.authentication.AuthenticationData;
+import com.calicode.gymapp.app.model.authentication.AuthenticationOperation;
+import com.calicode.gymapp.app.network.JsonOperation;
+import com.calicode.gymapp.app.network.RequestError;
+import com.calicode.gymapp.app.util.componentprovider.ComponentProvider;
 
 public class MainFragment extends Fragment {
 
@@ -62,7 +63,8 @@ public class MainFragment extends Fragment {
     }
 
     private void testLogin() {
-        AuthenticationOperation operation = new AuthenticationOperation();
+        AuthenticationOperation operation = ComponentProvider.get()
+                .getComponent(OperationCreator.class).getAuthenticationOperation();
         operation.setOperationListener(new JsonOperation.OnOperationCompleteListener() {
 
             @Override
@@ -77,7 +79,7 @@ public class MainFragment extends Fragment {
 
             @Override
             public void onFailure(RequestError error) {
-                showError(error.getMessage());
+                showError(error.getErrorMessage());
             }
         });
 

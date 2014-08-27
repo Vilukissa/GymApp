@@ -3,6 +3,8 @@
 
     <string name="app_name">GymApp</string>
 
+    <string name="common_error">Error</string>
+
     <string name="auth_button">Authenticate</string>
     <string name="authentication_status">Authentication status:</string>
     <string name="not_authenticated">Not authenticated</string>

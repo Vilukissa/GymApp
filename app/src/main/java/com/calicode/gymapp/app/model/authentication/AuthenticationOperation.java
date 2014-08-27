@@ -1,8 +1,9 @@
-package com.calicode.gymapp.app.model.authentication.operation;
+package com.calicode.gymapp.app.model.authentication;
 
 import com.android.volley.Request;
 import com.calicode.gymapp.app.Config;
-import com.calicode.gymapp.app.network.customrequest.JsonOperation;
+import com.calicode.gymapp.app.network.JsonParser;
+import com.calicode.gymapp.app.network.JsonOperation;
 import com.calicode.gymapp.app.util.Encryption;
 
 import java.util.HashMap;
@@ -14,7 +15,7 @@ public class AuthenticationOperation extends JsonOperation {
     private static final String SHARED_KEY = "key";
 
     public AuthenticationOperation() {
-        super(Request.Method.POST, new AuthenticationParser());
+        super(Request.Method.POST, new JsonParser(AuthenticationData.class));
     }
 
     @Override

@@ -1,10 +1,8 @@
-package com.calicode.gymapp.app.network.customrequest;
+package com.calicode.gymapp.app.network;
 
 import com.android.volley.DefaultRetryPolicy;
-import com.android.volley.Request;
 import com.calicode.gymapp.app.Config;
-import com.calicode.gymapp.app.network.BaseParser;
-import com.calicode.gymapp.app.network.VolleyHandler;
+import com.calicode.gymapp.app.util.componentprovider.ComponentProvider;
 
 import org.json.JSONObject;
 
@@ -18,9 +16,9 @@ public abstract class JsonOperation {
         public void onFailure(RequestError error);
     }
 
-    public static final int SOCKET_TIMEOUT_MS = 3000;
+    private static final int SOCKET_TIMEOUT_MS = 3000;
 
-    private CustomRequest mRequest;
+    private JsonRequest mRequest;
 
     public abstract String getUrl();
 
@@ -28,8 +26,8 @@ public abstract class JsonOperation {
         return new HashMap<String, String>();
     }
 
-    public JsonOperation(int method, BaseParser parser) {
-        mRequest = new CustomRequest(method, createUrl(), createJsonBody(), parser);
+    public JsonOperation(int method, JsonParser parser) {
+        mRequest = new JsonRequest(method, createUrl(), createJsonBody(), parser);
         mRequest.setRetryPolicy(new DefaultRetryPolicy(
                 SOCKET_TIMEOUT_MS,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
@@ -41,12 +39,13 @@ public abstract class JsonOperation {
     }
 
     public void execute() {
-        VolleyHandler.get().addToRequestQueue(mRequest);
+        ComponentProvider.get().getComponent(VolleyHandler.class)
+                .addToRequestQueue(mRequest);
     }
 
     private String createUrl() {
         return new StringBuilder()
-                .append(Config.SERVER_ADRESS)
+                .append(Config.SERVER_ADDRESS)
                 .append(getUrl()).toString();
     }
 
