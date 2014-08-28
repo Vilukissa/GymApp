@@ -2,6 +2,7 @@ package com.calicode.gymapp.app.network;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.calicode.gymapp.app.Config;
+import com.calicode.gymapp.app.model.OperationHandle;
 import com.calicode.gymapp.app.util.componentprovider.ComponentProvider;
 
 import org.json.JSONObject;
@@ -19,6 +20,7 @@ public abstract class JsonOperation {
     private static final int SOCKET_TIMEOUT_MS = 3000;
 
     private JsonRequest mRequest;
+    private boolean mRequestPending;
 
     public abstract String getUrl();
 
@@ -32,13 +34,37 @@ public abstract class JsonOperation {
                 SOCKET_TIMEOUT_MS,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+        setOperationListener();
     }
 
-    public void setOperationListener(OnOperationCompleteListener listener) {
-        mRequest.setListener(listener);
+    private void setOperationListener() {
+        mRequest.setListener(mListener);
     }
 
-    public void execute() {
+    private OperationHandle mExecuteListener;
+    private OnOperationCompleteListener mListener = new OnOperationCompleteListener() {
+
+        @Override
+        public void onSuccess(Object data) {
+            mRequestPending = false;
+            mExecuteListener.onSuccess(data);
+        }
+
+        @Override
+        public void onFailure(RequestError error) {
+            mRequestPending = false;
+            mExecuteListener.onFailure(error);
+        }
+    };
+
+    public boolean isRequestPending() {
+        return mRequestPending;
+    }
+
+    public void execute(OperationHandle executeListener) {
+        mExecuteListener = executeListener;
+        mRequestPending = true;
         ComponentProvider.get().getComponent(VolleyHandler.class)
                 .addToRequestQueue(mRequest);
     }

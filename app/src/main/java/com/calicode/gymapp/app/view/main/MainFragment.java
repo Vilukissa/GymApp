@@ -1,21 +1,22 @@
 package com.calicode.gymapp.app.view.main;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.calicode.gymapp.app.R;
-import com.calicode.gymapp.app.model.OperationCreator;
+import com.calicode.gymapp.app.model.OperationHandle;
 import com.calicode.gymapp.app.model.authentication.AuthenticationData;
-import com.calicode.gymapp.app.model.authentication.AuthenticationOperation;
+import com.calicode.gymapp.app.model.authentication.AuthenticationModel;
 import com.calicode.gymapp.app.network.JsonOperation;
 import com.calicode.gymapp.app.network.RequestError;
+import com.calicode.gymapp.app.util.Log;
 import com.calicode.gymapp.app.util.componentprovider.ComponentProvider;
+import com.calicode.gymapp.app.view.BaseFragment;
 
-public class MainFragment extends Fragment {
+public class MainFragment extends BaseFragment {
 
     private View mAuthButton;
     private View mContentLayout;
@@ -63,9 +64,10 @@ public class MainFragment extends Fragment {
     }
 
     private void testLogin() {
-        AuthenticationOperation operation = ComponentProvider.get()
-                .getComponent(OperationCreator.class).getAuthenticationOperation();
-        operation.setOperationListener(new JsonOperation.OnOperationCompleteListener() {
+        AuthenticationModel operation = ComponentProvider.get().getComponent(AuthenticationModel.class);
+        OperationHandle handle = operation.authenticate();
+
+        handle.setListener(new JsonOperation.OnOperationCompleteListener() {
 
             @Override
             public void onSuccess(Object data) {
@@ -83,6 +85,6 @@ public class MainFragment extends Fragment {
             }
         });
 
-        operation.execute();
+        attachHandle(handle);
     }
 }
