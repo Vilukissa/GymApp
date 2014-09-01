@@ -8,7 +8,12 @@ import com.calicode.gymapp.app.util.Log;
 import com.calicode.gymapp.app.util.componentprovider.ComponentProvider;
 import com.calicode.gymapp.app.util.componentprovider.componentinterfaces.SessionComponent;
 
-public abstract class OperationModel implements SessionComponent {
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+public abstract class OperationModel implements SessionComponent, Serializable {
 
     private static final String DEFAULT_ID = "default_id";
 
@@ -20,7 +25,7 @@ public abstract class OperationModel implements SessionComponent {
      * Value = operation handle
      */
     private LruCache<String, OperationHandle> mHandleCache;
-    private OperationHandleConfig[] mConfigs = new OperationHandleConfig[0];
+    private List<OperationHandleConfig> mConfigs = new ArrayList<OperationHandleConfig>();
 
     /**
      * Limits the operation handles count.
@@ -36,7 +41,7 @@ public abstract class OperationModel implements SessionComponent {
 
     public OperationModel(OperationHandleConfig... configs) {
         this();
-        mConfigs = configs;
+        mConfigs = new ArrayList(Arrays.asList(configs));
     }
 
     protected OperationHandle executeOperation() {
@@ -45,46 +50,44 @@ public abstract class OperationModel implements SessionComponent {
 
     protected OperationHandle executeOperation(String operationId) {
         // Cases:
-        // 1) Not found in handle cache AND request not pending => execute operation
-        // 2) Found in handle cache AND request not pending => give existing handle back
-        // 3) Found in handle cache AND request is pending => give existing handle back
-        // Impossible) Not found in handle cache AND Request is pending => log error
+        // 1) Not found in handle cache                                                             => execute operation
+        // 2) Found in handle cache AND request not pending AND has result (=caches)                => give existing handle back
+        // 3) Found in handle cache AND request is pending                                          => give existing handle back
+        // 4) If error is received                                                                  => handle removes itself from cache so next time 'handle == null'
+        // 5) If handle doesn't cache result                                                        => handle removes itself from cache so next time 'handle == null'
 
         JsonOperation operation = getOperation(ComponentProvider.get()
                 .getComponent(OperationCreator.class));
 
-        if (isCachedHandle(operationId)) {
+        OperationHandle handle = mHandleCache.get(operationId);
+
+        if (handle == null) {
+            // Cases 1 & 4 & 5
+            Log.debug("Creating new operation handle and executing");
+            handle = new OperationHandle(operationId, this, mConfigs);
+            mHandleCache.put(operationId, handle);
+            operation.execute(handle);
+        } else {
             // Cases 2 & 3
             Log.debug("Attaching to existing operation handle");
-            OperationHandle handle = mHandleCache.get(operationId);
-            return handle;
-        } else {
-            if (operation.isRequestPending()) {
-                // Impossible case
-                Log.error("Operation is pending and operation handle did not found in cache!");
-                return null;
-            } else {
-                // Case 1
-                Log.debug("Creating new operation handle and executing");
-                OperationHandle handle = new OperationHandle(operationId, mConfigs);
-                operation.execute(handle);
-                mHandleCache.put(operationId, handle);
-                return handle;
-            }
         }
+
+        return handle;
+    }
+
+    protected void removeHandle(String operationId) {
+        Log.debug("Removing operation handle from operation handle cache");
+        mHandleCache.remove(operationId);
     }
 
     public void clearCache() {
+        Log.debug("Clearing cache");
         mHandleCache.evictAll();
-    }
-
-    private boolean isCachedHandle(String operationId) {
-        return mHandleCache.get(operationId) != null;
     }
 
     @Override
     public void destroy() {
         clearCache();
-        mConfigs = new OperationHandleConfig[0];
+        mConfigs.clear();
     }
 }

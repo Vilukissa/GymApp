@@ -2,8 +2,8 @@ package com.calicode.gymapp.app.model.authentication;
 
 import com.android.volley.Request;
 import com.calicode.gymapp.app.Config;
-import com.calicode.gymapp.app.network.JsonParser;
 import com.calicode.gymapp.app.network.JsonOperation;
+import com.calicode.gymapp.app.network.JsonParser;
 import com.calicode.gymapp.app.util.Encryption;
 
 import java.util.HashMap;

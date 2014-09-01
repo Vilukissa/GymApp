@@ -10,24 +10,21 @@ import com.calicode.gymapp.app.R;
 import com.calicode.gymapp.app.model.OperationHandle;
 import com.calicode.gymapp.app.model.authentication.AuthenticationData;
 import com.calicode.gymapp.app.model.authentication.AuthenticationModel;
-import com.calicode.gymapp.app.network.JsonOperation;
+import com.calicode.gymapp.app.network.JsonOperation.OnOperationCompleteListener;
 import com.calicode.gymapp.app.network.RequestError;
-import com.calicode.gymapp.app.util.Log;
 import com.calicode.gymapp.app.util.componentprovider.ComponentProvider;
 import com.calicode.gymapp.app.view.BaseFragment;
 
 public class MainFragment extends BaseFragment {
 
-    private View mAuthButton;
     private View mContentLayout;
     private View mProgressLayout;
     private View mErrorLayout;
 
-    private View.OnClickListener mAuthButtonListener = new View.OnClickListener() {
+    private View.OnClickListener mRetryListener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            showProgress();
-            testLogin();
+            authenticate();
         }
     };
 
@@ -35,15 +32,27 @@ public class MainFragment extends BaseFragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
-        mAuthButton = rootView.findViewById(R.id.authButton);
         mContentLayout = rootView.findViewById(R.id.contentLayout);
         mProgressLayout = rootView.findViewById(R.id.progressLayout);
         mErrorLayout = rootView.findViewById(R.id.errorLayout);
 
-        mAuthButton.setOnClickListener(mAuthButtonListener);
-        mErrorLayout.setOnClickListener(mAuthButtonListener);
+        mErrorLayout.setOnClickListener(mRetryListener);
+
+        rootView.findViewById(R.id.clearCacheButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ComponentProvider.get().getComponent(AuthenticationModel.class).clearCache();
+                updateView(null);
+            }
+        });
 
         return rootView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        authenticate();
     }
 
     private void showContent() {
@@ -52,7 +61,8 @@ public class MainFragment extends BaseFragment {
     }
 
     private void showError(String error) {
-        ((TextView) mErrorLayout.findViewById(R.id.errorText)).setText(error);
+        ((TextView) mErrorLayout.findViewById(R.id.errorText)).setText(
+                getString(R.string.common_error_title) + ": " + error);
         mProgressLayout.setVisibility(View.GONE);
         mErrorLayout.setVisibility(View.VISIBLE);
     }
@@ -63,19 +73,24 @@ public class MainFragment extends BaseFragment {
         mProgressLayout.setVisibility(View.VISIBLE);
     }
 
-    private void testLogin() {
-        AuthenticationModel operation = ComponentProvider.get().getComponent(AuthenticationModel.class);
-        OperationHandle handle = operation.authenticate();
+    private void updateView(AuthenticationData data) {
+        String state = getString(data != null ? R.string.authenticated : R.string.not_authenticated);
+        String token = data != null ? data.getAuthToken() : "";
+        ((TextView) mContentLayout.findViewById(R.id.authenticationStateText)).setText(state);
+        ((TextView) mContentLayout.findViewById(R.id.authenticationTokenText)).setText(token);
+    }
 
-        handle.setListener(new JsonOperation.OnOperationCompleteListener() {
+    private void authenticate() {
+        showProgress();
+        OperationHandle operation = ComponentProvider.get().getComponent(
+                AuthenticationModel.class).authenticate();
+
+        OnOperationCompleteListener listener =
+                new OnOperationCompleteListener() {
 
             @Override
             public void onSuccess(Object data) {
-                ((TextView) mContentLayout.findViewById(R.id.authenticationStateText))
-                        .setText(getString(R.string.authenticated));
-                ((TextView) mContentLayout.findViewById(R.id.authenticationTokenText))
-                        .setText(((AuthenticationData) data).getAuthToken());
-                mAuthButton.setVisibility(View.GONE);
+                updateView((AuthenticationData) data);
                 showContent();
             }
 
@@ -83,8 +98,8 @@ public class MainFragment extends BaseFragment {
             public void onFailure(RequestError error) {
                 showError(error.getErrorMessage());
             }
-        });
+        };
 
-        attachHandle(handle);
+        attachListener(operation, listener);
     }
 }

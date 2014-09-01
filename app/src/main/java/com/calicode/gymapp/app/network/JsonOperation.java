@@ -20,7 +20,6 @@ public abstract class JsonOperation {
     private static final int SOCKET_TIMEOUT_MS = 3000;
 
     private JsonRequest mRequest;
-    private boolean mRequestPending;
 
     public abstract String getUrl();
 
@@ -34,37 +33,10 @@ public abstract class JsonOperation {
                 SOCKET_TIMEOUT_MS,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-
-        setOperationListener();
     }
 
-    private void setOperationListener() {
-        mRequest.setListener(mListener);
-    }
-
-    private OperationHandle mExecuteListener;
-    private OnOperationCompleteListener mListener = new OnOperationCompleteListener() {
-
-        @Override
-        public void onSuccess(Object data) {
-            mRequestPending = false;
-            mExecuteListener.onSuccess(data);
-        }
-
-        @Override
-        public void onFailure(RequestError error) {
-            mRequestPending = false;
-            mExecuteListener.onFailure(error);
-        }
-    };
-
-    public boolean isRequestPending() {
-        return mRequestPending;
-    }
-
-    public void execute(OperationHandle executeListener) {
-        mExecuteListener = executeListener;
-        mRequestPending = true;
+    public void execute(OperationHandle operationHandle) {
+        mRequest.setListener(operationHandle);
         ComponentProvider.get().getComponent(VolleyHandler.class)
                 .addToRequestQueue(mRequest);
     }
@@ -76,7 +48,6 @@ public abstract class JsonOperation {
     }
 
     private String createJsonBody() {
-        JSONObject obj = new JSONObject(getParams());
-        return obj.toString();
+        return new JSONObject(getParams()).toString();
     }
 }

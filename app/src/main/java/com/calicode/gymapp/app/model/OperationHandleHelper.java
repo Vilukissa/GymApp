@@ -1,44 +1,46 @@
 package com.calicode.gymapp.app.model;
 
-import com.calicode.gymapp.app.util.componentprovider.componentinterfaces.SessionComponent;
+import android.os.Bundle;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.calicode.gymapp.app.network.JsonOperation.OnOperationCompleteListener;
 
-public class OperationHandleHelper implements SessionComponent {
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
-    public enum FragmentState {
-        HIDDEN, VISIBLE;
+public class OperationHandleHelper {
+
+    private static final String LISTENERS = "listeners";
+
+    private List<OperationHandle> mListeners = new ArrayList<OperationHandle>();
+
+    public void onCreate(Bundle savedInstanceState) {
+        if (savedInstanceState != null && savedInstanceState.containsKey(LISTENERS)) {}
     }
 
-    private Map<String, OperationHandle> mHandles = new HashMap<String, OperationHandle>();
-
     public void onFragmentResume() {
-        notifyFragmentStateChange(FragmentState.VISIBLE);
+        Iterator<OperationHandle> iterator = mListeners.iterator();
+        while (iterator.hasNext()) {
+            OperationHandle handle = iterator.next();
+            handle.notifyOnResume();
+            // handle.checkCacheForResult();
+            iterator.remove();
+        }
     }
 
     public void onFragmentPause() {
-        notifyFragmentStateChange(FragmentState.HIDDEN);
-    }
-
-    public void attach(OperationHandle handle) {
-        if (handle.isResultReturned()) {
-            // We dont need the handle anymore
-            mHandles.remove(handle.getOperationId());
-        } else {
-            // Replaces previous handle
-            mHandles.put(handle.getOperationId(), handle);
+        for (OperationHandle handle : mListeners) {
+            handle.notifyOnPause();
         }
     }
 
-    private void notifyFragmentStateChange(FragmentState state) {
-        for (Map.Entry<String, OperationHandle> entry : mHandles.entrySet()) {
-            entry.getValue().notifyFragmentStateChange(state);
-        }
-    }
+    public void onSaveInstanceState(Bundle outState) {}
 
-    @Override
-    public void destroy() {
-        mHandles.clear();
+    public void attachPersistentListener(OperationHandle handle, OnOperationCompleteListener listener) {}
+
+    public void attachWeakListener(OperationHandle handle, OnOperationCompleteListener listener) {
+        // Holds listeners only onPause-onResume cycles
+        handle.setListener(listener);
+        mListeners.add(handle);
     }
 }

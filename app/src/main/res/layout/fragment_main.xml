@@ -1,63 +1,103 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="@dimen/activity_padding">
+    android:background="@drawable/background"
+    android:orientation="vertical">
 
     <FrameLayout
         android:id="@+id/contentLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <LinearLayout
+        <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:clipToPadding="false"
+            android:padding="@dimen/activity_padding"
+            android:scrollbarStyle="outsideOverlay"
+            android:fillViewport="true" >
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
                 android:orientation="vertical">
 
-                <TextView
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="16dp"
-                    android:textSize="24sp"
-                    android:text="@string/authentication_status" />
+                    android:orientation="vertical" >
 
-                <TextView
-                    android:id="@+id/authenticationStateText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="24dp"
-                    android:textSize="16sp"
-                    android:text="@string/not_authenticated" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/authentication_status"
+                        android:textSize="24sp" />
 
-                <TextView
-                    android:id="@+id/authenticationTokenText"
-                    android:layout_width="wrap_content"
+                    <TextView
+                        android:id="@+id/authenticationStateText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="8dp"
+                        android:text="@string/not_authenticated"
+                        android:textSize="16sp" />
+
+                    <TextView
+                        android:id="@+id/authenticationTokenText"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="8dp"
+                        android:textSize="16sp" />
+                </LinearLayout>
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="180dp"
+                    android:layout_margin="16dp"
+                    android:gravity="center">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/barbells" />
+                </LinearLayout>
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+
+                <Button
+                    android:id="@+id/loginButton"
+                    style="@style/CommonButton"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="24dp"
-                    android:textSize="16sp"/>
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/login_button" />
+
+                <Button
+                    android:id="@+id/clearCacheButton"
+                    style="@style/CommonButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:text="Clear cache" />
             </LinearLayout>
-
-            <Space
-                android:layout_width="match_parent"
-                android:layout_height="16dp" />
-
-            <Button
-                android:id="@+id/authButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/auth_button" />
-        </LinearLayout>
+        </ScrollView>
     </FrameLayout>
 
     <FrameLayout
         android:id="@+id/progressLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:padding="@dimen/activity_padding"
         android:visibility="gone">
 
         <ProgressBar
@@ -70,6 +110,7 @@
         android:id="@+id/errorLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:padding="@dimen/activity_padding"
         android:visibility="gone">
 
         <TextView
