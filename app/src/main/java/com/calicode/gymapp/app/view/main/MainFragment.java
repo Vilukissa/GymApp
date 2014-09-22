@@ -10,6 +10,7 @@ import com.calicode.gymapp.app.R;
 import com.calicode.gymapp.app.model.OperationHandle;
 import com.calicode.gymapp.app.model.authentication.AuthenticationData;
 import com.calicode.gymapp.app.model.authentication.AuthenticationModel;
+import com.calicode.gymapp.app.navigation.NavigationLocation;
 import com.calicode.gymapp.app.network.JsonOperation.OnOperationCompleteListener;
 import com.calicode.gymapp.app.network.RequestError;
 import com.calicode.gymapp.app.util.componentprovider.ComponentProvider;
@@ -21,13 +22,6 @@ public class MainFragment extends BaseFragment {
     private View mProgressLayout;
     private View mErrorLayout;
 
-    private View.OnClickListener mRetryListener = new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            authenticate();
-        }
-    };
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
@@ -36,13 +30,25 @@ public class MainFragment extends BaseFragment {
         mProgressLayout = rootView.findViewById(R.id.progressLayout);
         mErrorLayout = rootView.findViewById(R.id.errorLayout);
 
-        mErrorLayout.setOnClickListener(mRetryListener);
+        mErrorLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                authenticate();
+            }
+        });
 
         rootView.findViewById(R.id.clearCacheButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 ComponentProvider.get().getComponent(AuthenticationModel.class).clearCache();
                 updateView(null);
+            }
+        });
+
+        rootView.findViewById(R.id.loginButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                navigate(NavigationLocation.LOGIN);
             }
         });
 

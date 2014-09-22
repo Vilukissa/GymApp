@@ -5,11 +5,15 @@ import android.support.v4.app.Fragment;
 
 import com.calicode.gymapp.app.model.OperationHandle;
 import com.calicode.gymapp.app.model.OperationHandleHelper;
+import com.calicode.gymapp.app.navigation.NavigationLocation;
+import com.calicode.gymapp.app.navigation.Navigator;
 import com.calicode.gymapp.app.network.JsonOperation;
+import com.calicode.gymapp.app.util.componentprovider.ComponentProvider;
 
 public abstract class BaseFragment extends Fragment {
 
     private final OperationHandleHelper mOperationHandleHelper = new OperationHandleHelper();
+    private Navigator mNavigator = ComponentProvider.get().getComponent(Navigator.class);
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -43,5 +47,13 @@ public abstract class BaseFragment extends Fragment {
     /** Listener lives through the Fragment's onResume-onPause cycles */
     public void attachListener(OperationHandle handle, JsonOperation.OnOperationCompleteListener listener) {
         mOperationHandleHelper.attachWeakListener(handle, listener);
+    }
+
+    protected void navigate(NavigationLocation location) {
+        mNavigator.navigate(location);
+    }
+
+    protected void navigateBack() {
+        mNavigator.navigateBack();
     }
 }
