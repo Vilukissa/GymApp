@@ -2,7 +2,12 @@ package com.calicode.gymapp.app.view;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
 
+import com.calicode.gymapp.app.R;
 import com.calicode.gymapp.app.model.OperationHandle;
 import com.calicode.gymapp.app.model.OperationHandleHelper;
 import com.calicode.gymapp.app.navigation.NavigationLocation;
@@ -15,10 +20,36 @@ public abstract class BaseFragment extends Fragment {
     private final OperationHandleHelper mOperationHandleHelper = new OperationHandleHelper();
     private Navigator mNavigator = ComponentProvider.get().getComponent(Navigator.class);
 
+    private View mBaseView;
+    private View mContent;
+    private View mProgress;
+    private View mError;
+
+    protected boolean useProgressAndError() {
+        return true;
+    }
+
+    protected int getLayoutResource() {
+        return -1;
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mOperationHandleHelper.onCreate(savedInstanceState);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        int layoutResource = getLayoutResource();
+        boolean useProgressAndError = useProgressAndError();
+        mBaseView = inflater.inflate(layoutResource, container, false);
+        if (useProgressAndError) {
+            mContent = mBaseView.findViewById(R.id.contentLayout);
+            mProgress = mBaseView.findViewById(R.id.progressLayout);
+            mError = mBaseView.findViewById(R.id.errorLayout);
+        }
+        return mBaseView;
     }
 
     @Override
@@ -37,6 +68,36 @@ public abstract class BaseFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         mOperationHandleHelper.onSaveInstanceState(outState);
+    }
+
+    protected View getErrorView() {
+        return mError;
+    }
+
+    protected View getContentView() {
+        return mContent;
+    }
+
+    protected void showContent() {
+        mProgress.setVisibility(View.GONE);
+        mContent.setVisibility(View.VISIBLE);
+    }
+
+    protected void showError() {
+        mProgress.setVisibility(View.GONE);
+        mError.setVisibility(View.VISIBLE);
+    }
+
+    protected void showProgress() {
+        mContent.setVisibility(View.GONE);
+        mError.setVisibility(View.GONE);
+        mProgress.setVisibility(View.VISIBLE);
+    }
+
+    protected void setErrorText(String errorText) {
+        ((TextView) mError.findViewById(R.id.errorText)).setText(
+                getString(R.string.common_error_title) + ": " +
+                errorText);
     }
 
     /** Listener lives through the Fragment's onCreate-onDestroy cycles */

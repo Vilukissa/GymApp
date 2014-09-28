@@ -18,26 +18,23 @@ import com.calicode.gymapp.app.view.BaseFragment;
 
 public class MainFragment extends BaseFragment {
 
-    private View mContentLayout;
-    private View mProgressLayout;
-    private View mErrorLayout;
+    @Override
+    protected int getLayoutResource() {
+        return R.layout.fragment_main;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+        View view = super.onCreateView(inflater, container, savedInstanceState);
 
-        mContentLayout = rootView.findViewById(R.id.contentLayout);
-        mProgressLayout = rootView.findViewById(R.id.progressLayout);
-        mErrorLayout = rootView.findViewById(R.id.errorLayout);
-
-        mErrorLayout.setOnClickListener(new View.OnClickListener() {
+        getErrorView().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 authenticate();
             }
         });
 
-        rootView.findViewById(R.id.clearCacheButton).setOnClickListener(new View.OnClickListener() {
+        view.findViewById(R.id.clearCacheButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 ComponentProvider.get().getComponent(AuthenticationModel.class).clearCache();
@@ -45,14 +42,14 @@ public class MainFragment extends BaseFragment {
             }
         });
 
-        rootView.findViewById(R.id.loginButton).setOnClickListener(new View.OnClickListener() {
+        view.findViewById(R.id.loginButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 navigate(NavigationLocation.LOGIN);
             }
         });
 
-        return rootView;
+        return view;
     }
 
     @Override
@@ -61,29 +58,11 @@ public class MainFragment extends BaseFragment {
         authenticate();
     }
 
-    private void showContent() {
-        mProgressLayout.setVisibility(View.GONE);
-        mContentLayout.setVisibility(View.VISIBLE);
-    }
-
-    private void showError(String error) {
-        ((TextView) mErrorLayout.findViewById(R.id.errorText)).setText(
-                getString(R.string.common_error_title) + ": " + error);
-        mProgressLayout.setVisibility(View.GONE);
-        mErrorLayout.setVisibility(View.VISIBLE);
-    }
-
-    private void showProgress() {
-        mErrorLayout.setVisibility(View.GONE);
-        mContentLayout.setVisibility(View.GONE);
-        mProgressLayout.setVisibility(View.VISIBLE);
-    }
-
     private void updateView(AuthenticationData data) {
         String state = getString(data != null ? R.string.authenticated : R.string.not_authenticated);
         String token = data != null ? data.getAuthToken() : "";
-        ((TextView) mContentLayout.findViewById(R.id.authenticationStateText)).setText(state);
-        ((TextView) mContentLayout.findViewById(R.id.authenticationTokenText)).setText(token);
+        ((TextView) getContentView().findViewById(R.id.authenticationStateText)).setText(state);
+        ((TextView) getContentView().findViewById(R.id.authenticationTokenText)).setText(token);
     }
 
     private void authenticate() {
@@ -102,7 +81,8 @@ public class MainFragment extends BaseFragment {
 
             @Override
             public void onFailure(RequestError error) {
-                showError(error.getErrorMessage());
+                setErrorText(error.getErrorMessage());
+                showError();
             }
         };
 

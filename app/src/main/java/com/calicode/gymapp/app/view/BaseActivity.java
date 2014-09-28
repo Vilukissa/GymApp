@@ -41,10 +41,10 @@ public class BaseActivity extends FragmentActivity implements Navigator.OnNaviga
     }
 
     private void replaceFragment(Class<? extends Fragment> fragmentClass) {
-        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.container);
+        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.contentLayout);
         if (currentFragment == null || !currentFragment.equals(fragmentClass)) {
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.container, Fragment.instantiate(this, fragmentClass.getName()))
+                    .replace(R.id.fragmentContainer, Fragment.instantiate(this, fragmentClass.getName()))
                     .commit();
         }
     }
