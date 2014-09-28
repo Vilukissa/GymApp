@@ -10,7 +10,7 @@ public class OperationCreator implements Component {
         return new AuthenticationOperation();
     }
 
-    public LoginOperation getLoginOperation() {
-        return new LoginOperation();
+    public LoginOperation getLoginOperation(String userName, String password) {
+        return new LoginOperation(userName, password);
     }
 }

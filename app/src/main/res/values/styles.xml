@@ -8,4 +8,8 @@
         <item name="android:textColor">@drawable/button_text_selector</item>
     </style>
 
+    <style name="Text20">
+        <item name="android:textSize">20sp</item>
+    </style>
+
 </resources>
