@@ -41,7 +41,7 @@ public class BaseActivity extends FragmentActivity implements Navigator.OnNaviga
     }
 
     private void replaceFragment(Class<? extends Fragment> fragmentClass) {
-        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.contentLayout);
+        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
         if (currentFragment == null || !currentFragment.equals(fragmentClass)) {
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragmentContainer, Fragment.instantiate(this, fragmentClass.getName()))
