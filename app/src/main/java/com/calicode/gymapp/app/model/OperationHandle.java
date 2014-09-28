@@ -9,16 +9,17 @@ import java.util.List;
 public class OperationHandle implements OnOperationCompleteListener {
 
     public enum OperationHandleConfig {
-        DONT_CACHE;
+        DONT_CACHE, USE_INTERNAL_LISTENER;
     }
 
     private final String mOperationId;
-    private final OperationModel mOperationModel;
+    private OperationModel mOperationModel;
 
     private Object mResult;
     private boolean mUseCache = true;
 
     private OnOperationCompleteListener mExternalListener;
+    private OnOperationCompleteListener mInternalListener;
     private boolean mIsActive;
 
     public OperationHandle(String operationId, OperationModel operationModel) {
@@ -31,8 +32,16 @@ public class OperationHandle implements OnOperationCompleteListener {
         mUseCache = !configs.contains(OperationHandleConfig.DONT_CACHE);
     }
 
+    public OperationHandle(String operationId, OnOperationCompleteListener internalListener, List<OperationHandleConfig> configs) {
+        this(operationId, (OperationModel) internalListener, configs);
+        mInternalListener = internalListener;
+    }
+
     @Override
     public void onSuccess(Object data) {
+        if (mInternalListener != null) {
+            mInternalListener.onSuccess(data);
+        }
         if (mUseCache) {
             Log.debug("Caching data");
             mResult = data;
@@ -42,6 +51,9 @@ public class OperationHandle implements OnOperationCompleteListener {
 
     @Override
     public void onFailure(RequestError error) {
+        if (mInternalListener != null) {
+            mInternalListener.onFailure(error);
+        }
         returnErrorResult(error, mExternalListener);
     }
 
@@ -75,18 +87,6 @@ public class OperationHandle implements OnOperationCompleteListener {
         } else {
             mResult = null;
             mExternalListener = listener;
-        }
-    }
-
-    public boolean checkCacheForResult() {
-        if (mResult instanceof RequestError) {
-            returnErrorResult((RequestError) mResult, mExternalListener);
-            return true;
-        } else if (mResult != null) {
-            returnSuccessResult(mResult, mExternalListener);
-            return true;
-        } else {
-            return false;
         }
     }
 

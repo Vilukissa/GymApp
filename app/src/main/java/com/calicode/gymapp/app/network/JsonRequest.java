@@ -5,6 +5,7 @@ import com.android.volley.NetworkResponse;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.HttpHeaderParser;
+import com.calicode.gymapp.app.network.JsonOperation.OnOperationCompleteListener;
 import com.calicode.gymapp.app.util.Log;
 
 import org.json.JSONObject;
@@ -15,14 +16,14 @@ import java.util.Map;
 public class JsonRequest extends com.android.volley.toolbox.JsonRequest {
 
     private JsonParser mParser;
-    private JsonOperation.OnOperationCompleteListener mListener;
+    private OnOperationCompleteListener mListener;
 
     public JsonRequest(int method, String url, String requestBody, JsonParser parser) {
         super(method, url, requestBody, null, null);
         mParser = parser;
     }
 
-    public void setListener(JsonOperation.OnOperationCompleteListener listener) {
+    public void setListener(OnOperationCompleteListener listener) {
         mListener = listener;
     }
 

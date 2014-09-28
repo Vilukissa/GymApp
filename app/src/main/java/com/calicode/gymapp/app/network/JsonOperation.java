@@ -19,6 +19,9 @@ public abstract class JsonOperation {
 
     private static final int SOCKET_TIMEOUT_MS = 3000;
 
+    private final int mMethod;
+    private final JsonParser mParser;
+
     private JsonRequest mRequest;
 
     public abstract String getUrl();
@@ -28,14 +31,16 @@ public abstract class JsonOperation {
     }
 
     public JsonOperation(int method, JsonParser parser) {
-        mRequest = new JsonRequest(method, createUrl(), createJsonBody(), parser);
+        mMethod = method;
+        mParser = parser;
+    }
+
+    public void execute(OperationHandle operationHandle) {
+        mRequest = new JsonRequest(mMethod, createUrl(), createJsonBody(), mParser);
         mRequest.setRetryPolicy(new DefaultRetryPolicy(
                 SOCKET_TIMEOUT_MS,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-    }
-
-    public void execute(OperationHandle operationHandle) {
         mRequest.setListener(operationHandle);
         ComponentProvider.get().getComponent(VolleyHandler.class)
                 .addToRequestQueue(mRequest);

@@ -4,16 +4,16 @@ import android.util.LruCache;
 
 import com.calicode.gymapp.app.model.OperationHandle.OperationHandleConfig;
 import com.calicode.gymapp.app.network.JsonOperation;
+import com.calicode.gymapp.app.network.JsonOperation.OnOperationCompleteListener;
 import com.calicode.gymapp.app.util.Log;
 import com.calicode.gymapp.app.util.componentprovider.ComponentProvider;
 import com.calicode.gymapp.app.util.componentprovider.componentinterfaces.SessionComponent;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public abstract class OperationModel implements SessionComponent, Serializable {
+public abstract class OperationModel implements SessionComponent {
 
     private static final String DEFAULT_ID = "default_id";
 
@@ -64,7 +64,11 @@ public abstract class OperationModel implements SessionComponent, Serializable {
         if (handle == null) {
             // Cases 1 & 4 & 5
             Log.debug("Creating new operation handle and executing");
-            handle = new OperationHandle(operationId, this, mConfigs);
+            if (mConfigs.contains(OperationHandleConfig.USE_INTERNAL_LISTENER)) {
+                handle = new OperationHandle(operationId, (OnOperationCompleteListener) this, mConfigs);
+            } else {
+                handle = new OperationHandle(operationId, this, mConfigs);
+            }
             mHandleCache.put(operationId, handle);
             operation.execute(handle);
         } else {
