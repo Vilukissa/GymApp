@@ -4,6 +4,7 @@ import com.calicode.gymapp.app.model.OperationCreator;
 import com.calicode.gymapp.app.model.UserSessionManager;
 import com.calicode.gymapp.app.model.authentication.AuthenticationModel;
 import com.calicode.gymapp.app.model.login.LoginModel;
+import com.calicode.gymapp.app.model.workout.WorkoutDaysModel;
 import com.calicode.gymapp.app.navigation.Navigator;
 import com.calicode.gymapp.app.network.VolleyHandler;
 import com.calicode.gymapp.app.util.Log;
@@ -18,6 +19,7 @@ public final class ComponentProvider implements ComponentInitializer {
     private static final ComponentProvider INSTANCE = new ComponentProvider();
 
     private Map<Class<?>, Component> mComponents = new HashMap<Class<?>, Component>();
+    private Map<Class<?>, Component> mTaskComponents = new HashMap<Class<?>, Component>();
 
     public static ComponentProvider get() {
         return INSTANCE;
@@ -36,7 +38,13 @@ public final class ComponentProvider implements ComponentInitializer {
     }
 
     public void destroyComponents() {
-        for (Map.Entry<Class<?>, Component> entry : mComponents.entrySet()) {
+        destroyComponentList(mComponents);
+        destroyComponentList(mTaskComponents);
+        mTaskComponents = new HashMap<Class<?>, Component>();
+    }
+
+    private void destroyComponentList(Map<Class<?>, Component> items) {
+        for (Map.Entry<Class<?>, Component> entry : items.entrySet()) {
             Component component = entry.getValue();
             if (SessionComponent.class.isAssignableFrom(component.getClass())) {
                 Log.debug("Destroying session component: " + component.getClass().getName());
@@ -45,16 +53,33 @@ public final class ComponentProvider implements ComponentInitializer {
         }
     }
 
+    public <T extends Component> T createOrGetTaskComponent(Class<T> clazz) {
+        Component taskComponent = mTaskComponents.get(clazz);
+        if (taskComponent == null) {
+            try {
+                taskComponent = clazz.newInstance();
+                mTaskComponents.put(clazz, taskComponent);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        return (T) taskComponent;
+    }
+
+    public <T extends Component> void destroyTaskComponent(Class<T> clazz) {
+        mTaskComponents.remove(clazz);
+    }
+
     @Override
     public void addComponents() {
         addComponent(new VolleyHandler());
         addComponent(new OperationCreator());
         addComponent(new Navigator());
+        addComponent(new UserSessionManager());
 
         // Operation models
         addComponent(new AuthenticationModel());
         addComponent(new LoginModel());
-
-        addComponent(new UserSessionManager());
+        addComponent(new WorkoutDaysModel());
     }
 }

@@ -28,10 +28,8 @@ public class BaseActivity extends FragmentActivity implements Navigator.OnNaviga
 
     @Override
     public void onBackPressed() {
-        if (mNavigator.isStackEmpty()) {
+        if (!mNavigator.onBackPress()) {
             super.onBackPressed();
-        } else {
-            mNavigator.onBackPress();
         }
     }
 
@@ -42,7 +40,7 @@ public class BaseActivity extends FragmentActivity implements Navigator.OnNaviga
 
     private void replaceFragment(Class<? extends Fragment> fragmentClass) {
         Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragmentContainer);
-        if (currentFragment == null || !currentFragment.equals(fragmentClass)) {
+        if (currentFragment == null || !currentFragment.getClass().equals(fragmentClass)) {
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragmentContainer, Fragment.instantiate(this, fragmentClass.getName()))
                     .commit();

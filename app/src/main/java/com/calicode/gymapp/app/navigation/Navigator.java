@@ -1,5 +1,6 @@
 package com.calicode.gymapp.app.navigation;
 
+import com.calicode.gymapp.app.navigation.NavigationLocation.NavigationFlags;
 import com.calicode.gymapp.app.util.Log;
 import com.calicode.gymapp.app.util.componentprovider.componentinterfaces.SessionComponent;
 
@@ -14,14 +15,15 @@ public final class Navigator implements SessionComponent {
         void onNavigate(NavigationLocation location);
     }
 
-    public Navigator() {
-        mLocationStack.add(mLocation);
-    }
-
+    private NavigationLocation mLocation;
     private Map<Class<? extends OnNavigateListener>, OnNavigateListener> mListeners =
             new HashMap<Class<? extends OnNavigateListener>, OnNavigateListener>();
-    private NavigationLocation mLocation = NavigationLocation.MAIN;
     private List<NavigationLocation> mLocationStack = new ArrayList<NavigationLocation>();
+
+    public Navigator() {
+        mLocation = NavigationLocation.MAIN;
+        mLocationStack.add(mLocation);
+    }
 
     public void addListener(OnNavigateListener listener) {
         Log.debug("Adding navigation listener: " + listener.getClass().getSimpleName());
@@ -38,17 +40,27 @@ public final class Navigator implements SessionComponent {
         return mLocation;
     }
 
-    public boolean isStackEmpty() {
+    private boolean isStackEmpty() {
         return mLocationStack.size() == 1;
     }
 
-    public void onBackPress() {
+    public boolean onBackPress() {
         if (!isStackEmpty()) {
-            Log.debug("Removing last fragment from the stack");
+            Log.debug("Removing last location item (" + mLocation.name() + ") from the stack");
             mLocationStack.remove(mLocationStack.size() - 1);
             mLocation = mLocationStack.get(mLocationStack.size() - 1);
+
+            while (mLocation.getNavigationFlags().contains(NavigationFlags.DONT_ADD_TO_STACK)) {
+                Log.debug("Removing DONT_ADD_TO_STACK location item from the stack");
+                // Current location is marked not to be handled as it belongs to stack
+                mLocationStack.remove(mLocationStack.size() - 1);
+                mLocation = mLocationStack.get(mLocationStack.size() - 1);
+            }
+
             notifyLocationChange();
+            return true;
         }
+        return false;
     }
 
     public void navigateBack() {
@@ -61,7 +73,6 @@ public final class Navigator implements SessionComponent {
 
             mLocation = location;
             mLocationStack.add(mLocation);
-
             notifyLocationChange();
         }
     }
