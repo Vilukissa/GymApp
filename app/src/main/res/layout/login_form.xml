@@ -3,7 +3,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FF888888"
     android:gravity="center_vertical"
     android:orientation="vertical"
     android:paddingTop="24dp">
@@ -31,14 +30,14 @@
                 android:orientation="vertical">
 
                 <TextView
-                    style="@style/Text20"
+                    style="@style/Text20Black"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Username" />
 
                 <EditText
                     android:id="@+id/username"
-                    style="@style/Text20"
+                    style="@style/Text20Black"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content" />
             </LinearLayout>
@@ -67,14 +66,14 @@
                 android:orientation="vertical">
 
                 <TextView
-                    style="@style/Text20"
+                    style="@style/Text20Black"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Password" />
 
                 <EditText
                     android:id="@+id/password"
-                    style="@style/Text20"
+                    style="@style/Text20Black"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="textPassword" />

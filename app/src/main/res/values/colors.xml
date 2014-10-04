@@ -4,4 +4,7 @@
     <color name="button_gray_pressed">#222222</color>
     <color name="button_text_gray">#9F9F9F</color>
     <color name="button_text_gray_pressed">#8a8a8a</color>
+    <color name="list_divider_gray">#414141</color>
+
+    <color name="text_black">#121212</color>
 </resources>

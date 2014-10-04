@@ -29,25 +29,25 @@
                     android:orientation="vertical" >
 
                     <TextView
+                        style="@style/Text24Black"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/authentication_status"
-                        android:textSize="24sp" />
+                        android:text="@string/authentication_status" />
 
                     <TextView
                         android:id="@+id/authenticationStateText"
+                        style="@style/Text16Black"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="8dp"
-                        android:text="@string/not_authenticated"
-                        android:textSize="16sp" />
+                        android:text="@string/not_authenticated" />
 
                     <TextView
                         android:id="@+id/authenticationTokenText"
+                        style="@style/Text16Black"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="8dp"
-                        android:textSize="16sp" />
+                        android:layout_marginLeft="8dp" />
                 </LinearLayout>
 
                 <Space

@@ -11,4 +11,8 @@
     <string name="authenticated">Authenticated</string>
 
     <string name="login_button">Login</string>
+
+    <string name="move_reps">Reps</string>
+    <string name="move_sets">Sets</string>
+    <string name="move_weight">Weight [kg]</string>
 </resources>

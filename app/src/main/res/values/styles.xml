@@ -8,8 +8,49 @@
         <item name="android:textColor">@drawable/button_text_selector</item>
     </style>
 
-    <style name="Text20">
+    <style name="Text28Gray">
+        <item name="android:textSize">28sp</item>
+        <item name="android:textColor">@color/button_text_gray</item>
+    </style>
+
+    <style name="Text28Black">
+        <item name="android:textSize">28sp</item>
+        <item name="android:textColor">@color/text_black</item>
+    </style>
+
+    <style name="Text24Black">
+        <item name="android:textSize">24sp</item>
+        <item name="android:textColor">@color/text_black</item>
+    </style>
+
+    <style name="Text20Gray">
         <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/button_text_gray</item>
+    </style>
+
+    <style name="Text20Black">
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/text_black</item>
+    </style>
+
+    <style name="Text16GraySelector">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@drawable/button_text_selector</item>
+    </style>
+
+    <style name="Text16Gray">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/button_text_gray</item>
+    </style>
+
+    <style name="Text16Black">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/text_black</item>
+    </style>
+
+    <style name="Text14Gray">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/button_text_gray</item>
     </style>
 
 </resources>
