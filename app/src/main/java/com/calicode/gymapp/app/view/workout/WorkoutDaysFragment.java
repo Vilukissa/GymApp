@@ -13,15 +13,12 @@ import com.calicode.gymapp.app.model.OperationHandle;
 import com.calicode.gymapp.app.model.workout.WorkoutDaysData;
 import com.calicode.gymapp.app.model.workout.WorkoutDaysData.WorkoutDay;
 import com.calicode.gymapp.app.model.workout.WorkoutDaysModel;
-import com.calicode.gymapp.app.model.workout.WorkoutDaysOperation;
 import com.calicode.gymapp.app.navigation.NavigationLocation;
 import com.calicode.gymapp.app.network.JsonOperation.OnOperationCompleteListener;
 import com.calicode.gymapp.app.network.RequestError;
 import com.calicode.gymapp.app.util.Log;
 import com.calicode.gymapp.app.util.componentprovider.ComponentProvider;
 import com.calicode.gymapp.app.view.BaseFragment;
-
-import java.util.List;
 
 public class WorkoutDaysFragment extends BaseFragment implements OnItemClickListener {
 
@@ -46,6 +43,7 @@ public class WorkoutDaysFragment extends BaseFragment implements OnItemClickList
         showProgress();
         OperationHandle handle = ComponentProvider.get().getComponent(WorkoutDaysModel.class).fetchWorkoutDays();
         OnOperationCompleteListener listener = new OnOperationCompleteListener() {
+
             @Override
             public void onSuccess(Object data) {
                 Log.debug("Workouts fetched");

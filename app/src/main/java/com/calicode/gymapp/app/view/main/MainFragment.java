@@ -34,14 +34,6 @@ public class MainFragment extends BaseFragment {
             }
         });
 
-        view.findViewById(R.id.clearCacheButton).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ComponentProvider.get().getComponent(AuthenticationModel.class).clearCache();
-                updateView(null);
-            }
-        });
-
         view.findViewById(R.id.loginButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -59,8 +51,8 @@ public class MainFragment extends BaseFragment {
     }
 
     private void updateView(AuthenticationData data) {
-        String state = getString(data != null ? R.string.authenticated : R.string.not_authenticated);
-        String token = data != null ? data.getAuthToken() : "";
+        String state = getString(R.string.authenticated);
+        String token = data.getAuthToken();
         ((TextView) getContentView().findViewById(R.id.authenticationStateText)).setText(state);
         ((TextView) getContentView().findViewById(R.id.authenticationTokenText)).setText(token);
     }

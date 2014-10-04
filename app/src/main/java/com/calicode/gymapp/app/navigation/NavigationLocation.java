@@ -4,6 +4,7 @@ import android.support.v4.app.Fragment;
 
 import com.calicode.gymapp.app.view.login.LoginFragment;
 import com.calicode.gymapp.app.view.main.MainFragment;
+import com.calicode.gymapp.app.view.mainmenu.MenuFragment;
 import com.calicode.gymapp.app.view.workout.WorkoutDayDetails;
 import com.calicode.gymapp.app.view.workout.WorkoutDaysFragment;
 
@@ -14,11 +15,13 @@ public enum NavigationLocation {
 
     MAIN(MainFragment.class),
     LOGIN(LoginFragment.class, NavigationFlags.DONT_ADD_TO_STACK),
+    MAIN_MENU(MenuFragment.class),
     WORKOUT_DAYS(WorkoutDaysFragment.class),
     WORKOUT_DAY_DETAILS(WorkoutDayDetails.class);
 
     public enum NavigationFlags {
         DONT_ADD_TO_STACK;
+        // TODO: add REQUIRES_LOGIN
     }
 
     private final NavigationFlags[] mFlags;

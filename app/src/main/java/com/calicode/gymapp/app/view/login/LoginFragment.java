@@ -47,7 +47,7 @@ public class LoginFragment extends BaseFragment {
         OnOperationCompleteListener listener = new OnOperationCompleteListener() {
             @Override
             public void onSuccess(Object data) {
-                navigate(NavigationLocation.WORKOUT_DAYS);
+                navigate(NavigationLocation.MAIN_MENU);
             }
 
             @Override

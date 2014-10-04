@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center">
+
+    <Button
+        android:id="@+id/lastFiveWorkoutsButton"
+        style="@style/CommonButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="24dp"
+        android:layout_marginBottom="8dp"
+        android:text="@string/menu_five_workouts"/>
+
+    <Button
+        android:id="@+id/addWorkoutButton"
+        style="@style/CommonButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="24dp"
+        android:layout_marginBottom="8dp"
+        android:text="@string/menu_add_workout"/>
+
+    <Button
+        android:id="@+id/logoutButton"
+        style="@style/CommonButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="24dp"
+        android:text="@string/menu_logout"/>
+
+</LinearLayout>

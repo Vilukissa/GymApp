@@ -15,6 +15,11 @@ import com.calicode.gymapp.app.view.BaseFragment;
 public class WorkoutDayDetails extends BaseFragment {
 
     @Override
+    protected boolean useProgressAndError() {
+        return false;
+    }
+
+    @Override
     protected int getLayoutResource() {
         return R.layout.workout_day_details;
     }
