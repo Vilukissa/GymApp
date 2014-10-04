@@ -3,6 +3,7 @@ package com.calicode.gymapp.app.network;
 import com.android.volley.DefaultRetryPolicy;
 import com.calicode.gymapp.app.Config;
 import com.calicode.gymapp.app.model.OperationHandle;
+import com.calicode.gymapp.app.util.Log;
 import com.calicode.gymapp.app.util.componentprovider.ComponentProvider;
 
 import org.json.JSONObject;
@@ -36,6 +37,8 @@ public abstract class JsonOperation {
     }
 
     public void execute(OperationHandle operationHandle) {
+        Log.debug("JSON body: " + getParams().toString());
+
         mRequest = new JsonRequest(mMethod, createUrl(), createJsonBody(), mParser);
         mRequest.setRetryPolicy(new DefaultRetryPolicy(
                 SOCKET_TIMEOUT_MS,

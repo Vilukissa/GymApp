@@ -33,6 +33,7 @@ public class JsonRequest extends com.android.volley.toolbox.JsonRequest {
             String json = new String(response.data,
                     HttpHeaderParser.parseCharset(response.headers));
 
+            Log.debug("Raw response from server: " + json);
             Log.debug("Trying to parse response from " + getUrl() + " => " + new JSONObject(json).toString());
             Object dataObject = mParser.tryParse(json);
 
