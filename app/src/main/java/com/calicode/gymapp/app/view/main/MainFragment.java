@@ -37,7 +37,7 @@ public class MainFragment extends BaseFragment {
         view.findViewById(R.id.loginButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                navigate(NavigationLocation.LOGIN);
+                navigateToLocation(NavigationLocation.LOGIN);
             }
         });
 

@@ -92,6 +92,5 @@ public abstract class OperationModel implements SessionComponent {
     @Override
     public void destroy() {
         clearCache();
-        mConfigs.clear();
     }
 }

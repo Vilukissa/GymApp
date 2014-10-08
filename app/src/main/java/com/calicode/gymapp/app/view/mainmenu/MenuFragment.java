@@ -7,7 +7,9 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 
 import com.calicode.gymapp.app.R;
+import com.calicode.gymapp.app.model.logout.LogoutModel;
 import com.calicode.gymapp.app.navigation.NavigationLocation;
+import com.calicode.gymapp.app.util.componentprovider.ComponentProvider;
 import com.calicode.gymapp.app.view.BaseFragment;
 
 public class MenuFragment extends BaseFragment implements OnClickListener {
@@ -37,11 +39,12 @@ public class MenuFragment extends BaseFragment implements OnClickListener {
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.lastFiveWorkoutsButton:
-                navigate(NavigationLocation.WORKOUT_DAYS);
+                navigateToLocation(NavigationLocation.WORKOUT_DAYS);
                 break;
             case R.id.addWorkoutButton:
                 break;
             case R.id.logoutButton:
+                ComponentProvider.get().getComponent(LogoutModel.class).logout();
                 break;
         }
     }

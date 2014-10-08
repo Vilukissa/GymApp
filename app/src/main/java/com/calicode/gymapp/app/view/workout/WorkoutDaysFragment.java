@@ -70,6 +70,6 @@ public class WorkoutDaysFragment extends BaseFragment implements OnItemClickList
     public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
         ComponentProvider.get().createOrGetTaskComponent(WorkoutDayDetailsTaskModel.class).
                 setSelectedWorkoutDay((WorkoutDay) adapterView.getItemAtPosition(position));
-        navigate(NavigationLocation.WORKOUT_DAY_DETAILS);
+        navigateToLocation(NavigationLocation.WORKOUT_DAY_DETAILS);
     }
 }

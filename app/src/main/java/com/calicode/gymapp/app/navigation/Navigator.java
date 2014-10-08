@@ -2,17 +2,19 @@ package com.calicode.gymapp.app.navigation;
 
 import com.calicode.gymapp.app.navigation.NavigationLocation.NavigationFlags;
 import com.calicode.gymapp.app.util.Log;
-import com.calicode.gymapp.app.util.componentprovider.componentinterfaces.SessionComponent;
+import com.calicode.gymapp.app.util.componentprovider.ComponentProvider;
+import com.calicode.gymapp.app.util.componentprovider.componentinterfaces.Component;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
-public final class Navigator implements SessionComponent {
+public final class Navigator implements Component {
 
     public interface OnNavigateListener {
-        void onNavigate(NavigationLocation location);
+        void navigate(NavigationLocation location);
     }
 
     private NavigationLocation mLocation;
@@ -28,7 +30,7 @@ public final class Navigator implements SessionComponent {
     public void addListener(OnNavigateListener listener) {
         Log.debug("Adding navigation listener: " + listener.getClass().getSimpleName());
         mListeners.put(listener.getClass(), listener);
-        listener.onNavigate(mLocation);
+        listener.navigate(mLocation);
     }
 
     public void removeListener(OnNavigateListener listener) {
@@ -38,10 +40,6 @@ public final class Navigator implements SessionComponent {
 
     public NavigationLocation getLocation() {
         return mLocation;
-    }
-
-    private boolean isStackEmpty() {
-        return mLocationStack.size() == 1;
     }
 
     public boolean onBackPress() {
@@ -67,7 +65,7 @@ public final class Navigator implements SessionComponent {
         onBackPress();
     }
 
-    public void navigate(NavigationLocation location) {
+    public void navigateToLocation(NavigationLocation location) {
         if (mLocation != location) {
             Log.debug("Navigating to " + location.getFragmentClass().getSimpleName());
 
@@ -77,16 +75,31 @@ public final class Navigator implements SessionComponent {
         }
     }
 
+    public void logout() {
+        ComponentProvider.get().destroyComponents();
+        clearStack();
+        notifyLocationChange();
+    }
+
     private void notifyLocationChange() {
-        for (Map.Entry<Class<? extends OnNavigateListener>, OnNavigateListener> entry
+        for (Entry<Class<? extends OnNavigateListener>, OnNavigateListener> entry
                 : mListeners.entrySet()) {
-            entry.getValue().onNavigate(mLocation);
+            entry.getValue().navigate(mLocation);
         }
     }
 
-    @Override
-    public void destroy() {
+    public void resetNavigator() {
         mListeners.clear();
+        clearStack();
+    }
+
+    private boolean isStackEmpty() {
+        return mLocationStack.size() == 1;
+    }
+
+    private void clearStack() {
         mLocation = NavigationLocation.MAIN;
+        mLocationStack.clear();
+        mLocationStack.add(mLocation);
     }
 }

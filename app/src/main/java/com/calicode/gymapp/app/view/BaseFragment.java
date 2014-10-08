@@ -110,8 +110,8 @@ public abstract class BaseFragment extends Fragment {
         mOperationHandleHelper.attachWeakListener(handle, listener);
     }
 
-    protected void navigate(NavigationLocation location) {
-        mNavigator.navigate(location);
+    protected void navigateToLocation(NavigationLocation location) {
+        mNavigator.navigateToLocation(location);
     }
 
     protected void navigateBack() {
