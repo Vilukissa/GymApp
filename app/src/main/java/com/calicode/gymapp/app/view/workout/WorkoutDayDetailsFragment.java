@@ -12,7 +12,7 @@ import com.calicode.gymapp.app.model.workout.WorkoutDaysData.WorkoutDay;
 import com.calicode.gymapp.app.util.componentprovider.ComponentProvider;
 import com.calicode.gymapp.app.view.BaseFragment;
 
-public class WorkoutDayDetails extends BaseFragment {
+public class WorkoutDayDetailsFragment extends BaseFragment {
 
     @Override
     protected boolean useProgressAndError() {
@@ -30,13 +30,8 @@ public class WorkoutDayDetails extends BaseFragment {
         WorkoutDayDetailsTaskModel taskModel = ComponentProvider.get().createOrGetTaskComponent(WorkoutDayDetailsTaskModel.class);
         WorkoutDay workoutDay = taskModel.getSelectedWorkoutDay();
 
-        TextView title = (TextView) view.findViewById(R.id.workoutDayTitle);
-        title.setText(workoutDay.getDay());
-
-        View moveListHeader = view.findViewById(R.id.setListHeader);
-        if (workoutDay.getMoveList().size() == 0) {
-            moveListHeader.setVisibility(View.GONE);
-        }
+        TextView workoutDate = (TextView) view.findViewById(R.id.workoutDayDate);
+        workoutDate.setText(workoutDay.getDay());
 
         ListView moveList = (ListView) view.findViewById(R.id.workoutMoveList);
         moveList.setAdapter(new MoveListAdapter(getActivity(), workoutDay.getMoveList()));

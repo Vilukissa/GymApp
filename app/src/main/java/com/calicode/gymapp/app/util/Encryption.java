@@ -27,7 +27,8 @@ public class Encryption {
     }
 
     public static String generateLoginToken(String username, String password) {
-        String authToken = ComponentProvider.get().getComponent(UserSessionManager.class).getAuthToken();
+        String authToken = ComponentProvider.get().getComponent(UserSessionManager.class)
+                .getAuthenticationData().getAuthToken();
         String loginToken = md5(username + authToken + password);
         return loginToken;
     }

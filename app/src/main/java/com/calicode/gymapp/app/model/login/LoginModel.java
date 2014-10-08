@@ -41,7 +41,9 @@ public class LoginModel extends OperationModel implements OnOperationCompleteLis
     @Override
     public void onSuccess(Object data) {
         LoginData loginData = (LoginData) data;
-        ComponentProvider.get().getComponent(UserSessionManager.class).setLoginData(loginData);
+        UserSessionManager userSessionManager = ComponentProvider.get().getComponent(UserSessionManager.class);
+        userSessionManager.setLoginData(loginData);
+        userSessionManager.loggedIn();
     }
 
     @Override

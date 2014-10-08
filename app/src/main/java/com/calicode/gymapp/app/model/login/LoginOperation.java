@@ -20,7 +20,8 @@ public class LoginOperation extends JsonOperation {
         super(Request.Method.POST, new JsonParser(LoginData.class));
         mUserName = userName;
         mPassword = password;
-        mAuthToken = ComponentProvider.get().getComponent(UserSessionManager.class).getAuthToken();
+        mAuthToken = ComponentProvider.get().getComponent(UserSessionManager.class)
+                .getAuthenticationData().getAuthToken();
     }
 
     @Override

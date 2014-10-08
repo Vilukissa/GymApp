@@ -56,7 +56,7 @@ public class VolleyHandler implements SessionComponent {
         if (!URLS_WITHOUT_COOKIES.contains(url)) {
             Map<String, List<String>> cookies = new HashMap<String, List<String>>();
             List<String> cookie = Arrays.asList("sessionId=" + ComponentProvider.get()
-                    .getComponent(UserSessionManager.class).getAuthToken());
+                    .getComponent(UserSessionManager.class).getTokenForCookies());
             cookies.put("Set-Cookie", cookie);
             try {
                 mCookieManager.put(new URI(url), cookies);

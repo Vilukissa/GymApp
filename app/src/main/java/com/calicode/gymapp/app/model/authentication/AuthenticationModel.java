@@ -28,7 +28,9 @@ public class AuthenticationModel extends OperationModel implements OnOperationCo
     @Override
     public void onSuccess(Object data) {
         AuthenticationData authenticationData = (AuthenticationData) data;
-        ComponentProvider.get().getComponent(UserSessionManager.class).setAuthToken(authenticationData.getAuthToken());
+        UserSessionManager userSessionManager = ComponentProvider.get().getComponent(UserSessionManager.class);
+        userSessionManager.setAuthenticationData(authenticationData);
+        userSessionManager.authenticated();
     }
 
     @Override
