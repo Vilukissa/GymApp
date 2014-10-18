@@ -42,6 +42,7 @@ public class MenuFragment extends BaseFragment implements OnClickListener {
                 navigateToLocation(NavigationLocation.WORKOUT_DAYS);
                 break;
             case R.id.addWorkoutButton:
+                navigateToLocation(NavigationLocation.ADD_WORKOUT);
                 break;
             case R.id.logoutButton:
                 ComponentProvider.get().getComponent(LogoutModel.class).logout();

@@ -5,7 +5,8 @@ import com.calicode.gymapp.app.model.UserSessionManager;
 import com.calicode.gymapp.app.model.authentication.AuthenticationModel;
 import com.calicode.gymapp.app.model.login.LoginModel;
 import com.calicode.gymapp.app.model.logout.LogoutModel;
-import com.calicode.gymapp.app.model.workout.WorkoutDaysModel;
+import com.calicode.gymapp.app.model.workout.add.AddWorkoutDayModel;
+import com.calicode.gymapp.app.model.workout.days.WorkoutDaysModel;
 import com.calicode.gymapp.app.navigation.Navigator;
 import com.calicode.gymapp.app.network.VolleyHandler;
 import com.calicode.gymapp.app.util.Log;
@@ -83,5 +84,6 @@ public final class ComponentProvider implements ComponentInitializer {
         addComponent(new LoginModel());
         addComponent(new LogoutModel());
         addComponent(new WorkoutDaysModel());
+        addComponent(new AddWorkoutDayModel());
     }
 }

@@ -3,8 +3,13 @@ package com.calicode.gymapp.app.model;
 import com.calicode.gymapp.app.model.authentication.AuthenticationOperation;
 import com.calicode.gymapp.app.model.login.LoginOperation;
 import com.calicode.gymapp.app.model.logout.LogoutOperation;
-import com.calicode.gymapp.app.model.workout.WorkoutDaysOperation;
+import com.calicode.gymapp.app.model.workout.WorkoutMove;
+import com.calicode.gymapp.app.model.workout.add.AddWorkoutDayOperation;
+import com.calicode.gymapp.app.model.workout.days.WorkoutDaysOperation;
+import com.calicode.gymapp.app.network.JsonOperation;
 import com.calicode.gymapp.app.util.componentprovider.componentinterfaces.Component;
+
+import java.util.List;
 
 public class OperationCreator implements Component {
 
@@ -22,5 +27,9 @@ public class OperationCreator implements Component {
 
     public LogoutOperation getLogoutOperation() {
         return new LogoutOperation();
+    }
+
+    public JsonOperation getAddWorkoutDayOperation(String day, List<WorkoutMove> workoutMoves) {
+        return new AddWorkoutDayOperation(day, workoutMoves);
     }
 }
