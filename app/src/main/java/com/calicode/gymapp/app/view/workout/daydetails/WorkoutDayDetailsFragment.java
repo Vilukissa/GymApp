@@ -1,4 +1,4 @@
-package com.calicode.gymapp.app.view.workout;
+package com.calicode.gymapp.app.view.workout.daydetails;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -8,7 +8,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.calicode.gymapp.app.R;
-import com.calicode.gymapp.app.model.workout.WorkoutDaysData.WorkoutDay;
+import com.calicode.gymapp.app.model.workout.WorkoutDay;
 import com.calicode.gymapp.app.util.componentprovider.ComponentProvider;
 import com.calicode.gymapp.app.view.BaseFragment;
 

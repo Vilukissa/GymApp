@@ -1,4 +1,4 @@
-package com.calicode.gymapp.app.view.workout;
+package com.calicode.gymapp.app.view.workout.dayslist;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,15 +10,16 @@ import android.widget.ListView;
 
 import com.calicode.gymapp.app.R;
 import com.calicode.gymapp.app.model.OperationHandle;
-import com.calicode.gymapp.app.model.workout.WorkoutDaysData;
-import com.calicode.gymapp.app.model.workout.WorkoutDaysData.WorkoutDay;
-import com.calicode.gymapp.app.model.workout.WorkoutDaysModel;
+import com.calicode.gymapp.app.model.workout.WorkoutDay;
+import com.calicode.gymapp.app.model.workout.days.WorkoutDaysData;
+import com.calicode.gymapp.app.model.workout.days.WorkoutDaysModel;
 import com.calicode.gymapp.app.navigation.NavigationLocation;
 import com.calicode.gymapp.app.network.JsonOperation.OnOperationCompleteListener;
 import com.calicode.gymapp.app.network.RequestError;
 import com.calicode.gymapp.app.util.Log;
 import com.calicode.gymapp.app.util.componentprovider.ComponentProvider;
 import com.calicode.gymapp.app.view.BaseFragment;
+import com.calicode.gymapp.app.view.workout.daydetails.WorkoutDayDetailsTaskModel;
 
 public class WorkoutDaysFragment extends BaseFragment implements OnItemClickListener {
 

@@ -1,4 +1,4 @@
-package com.calicode.gymapp.app.model.workout;
+package com.calicode.gymapp.app.model.workout.days;
 
 import com.android.volley.Request.Method;
 import com.calicode.gymapp.app.network.JsonOperation;
