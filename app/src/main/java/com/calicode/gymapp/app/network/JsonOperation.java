@@ -3,13 +3,11 @@ package com.calicode.gymapp.app.network;
 import com.android.volley.DefaultRetryPolicy;
 import com.calicode.gymapp.app.Config;
 import com.calicode.gymapp.app.model.OperationHandle;
+import com.calicode.gymapp.app.util.Jackson;
 import com.calicode.gymapp.app.util.Log;
 import com.calicode.gymapp.app.util.componentprovider.ComponentProvider;
 
-import org.json.JSONObject;
-
 import java.util.HashMap;
-import java.util.Map;
 
 public abstract class JsonOperation {
 
@@ -23,11 +21,9 @@ public abstract class JsonOperation {
     private final int mMethod;
     private final JsonParser mParser;
 
-    private JsonRequest mRequest;
-
     public abstract String getUrl();
 
-    public Map<String, String> getParams() {
+    public Object getParams() {
         return new HashMap<String, String>();
     }
 
@@ -37,25 +33,29 @@ public abstract class JsonOperation {
     }
 
     public void execute(OperationHandle operationHandle) {
-        Log.debug("JSON body: " + getParams().toString());
+        Log.debug("JSON body: " + getParams());
 
-        mRequest = new JsonRequest(mMethod, createUrl(), createJsonBody(), mParser);
-        mRequest.setRetryPolicy(new DefaultRetryPolicy(
+        JsonRequest request = new JsonRequest(mMethod, createUrl(), createJsonBody(), mParser);
+        request.setRetryPolicy(new DefaultRetryPolicy(
                 SOCKET_TIMEOUT_MS,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
                 DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-        mRequest.setListener(operationHandle);
+        request.setListener(operationHandle);
         ComponentProvider.get().getComponent(VolleyHandler.class)
-                .addToRequestQueue(mRequest);
+                .addToRequestQueue(request);
     }
 
     private String createUrl() {
-        return new StringBuilder()
-                .append(Config.SERVER_ADDRESS)
-                .append(getUrl()).toString();
+        return Config.SERVER_ADDRESS + getUrl();
     }
 
     private String createJsonBody() {
-        return new JSONObject(getParams()).toString();
+        String json = "";
+        try {
+            json = Jackson.OBJECT_WRITER.writeValueAsString(getParams());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return json;
     }
 }
