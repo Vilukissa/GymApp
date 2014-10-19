@@ -18,6 +18,7 @@ public class JsonRequest extends com.android.volley.toolbox.JsonRequest {
     private JsonParser mParser;
     private OnOperationCompleteListener mListener;
 
+    @SuppressWarnings("unchecked")
     public JsonRequest(int method, String url, String requestBody, JsonParser parser) {
         super(method, url, requestBody, null, null);
         mParser = parser;
@@ -34,7 +35,7 @@ public class JsonRequest extends com.android.volley.toolbox.JsonRequest {
                     HttpHeaderParser.parseCharset(response.headers));
 
             Log.debug("Raw response from server: " + json);
-            Log.debug("Trying to parse response from " + getUrl() + " => " + new JSONObject(json).toString());
+            Log.debug("Trying to parse response from " + getUrl() + " => " + new JSONObject(json));
             Object dataObject = mParser.tryParse(json);
 
             return Response.success(dataObject, HttpHeaderParser.parseCacheHeaders(response));
@@ -51,7 +52,7 @@ public class JsonRequest extends com.android.volley.toolbox.JsonRequest {
 
     @Override
     public void deliverError(VolleyError error) {
-        Log.debug("Error from " + getUrl() + " => " + error.toString());
+        Log.debug("Error from " + getUrl() + " => " + error);
         mListener.onFailure(new RequestError(error));
     }
 

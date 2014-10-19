@@ -35,6 +35,7 @@ public final class ComponentProvider implements ComponentInitializer {
         mComponents.put(instance.getClass(), instance);
     }
 
+    @SuppressWarnings("unchecked")
     public <T extends Component> T getComponent(Class<T> clazz) {
         return (T) mComponents.get(clazz);
     }
@@ -55,6 +56,7 @@ public final class ComponentProvider implements ComponentInitializer {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public <T extends Component> T createOrGetTaskComponent(Class<T> clazz) {
         Component taskComponent = mTaskComponents.get(clazz);
         if (taskComponent == null) {

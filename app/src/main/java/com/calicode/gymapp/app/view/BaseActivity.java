@@ -69,10 +69,10 @@ public class BaseActivity extends FragmentActivity implements OnNavigateListener
 
     @Override
     public void loginStateChanged(LoginState loginState) {
-        Log.debug("Login state changed: " + loginState);
         if (mLoginState == loginState) {
             return;
         }
+        Log.debug("Login state changed: " + loginState);
 
         mLoginState = loginState;
         if (loginState == LoginState.LOGGED_OUT) {

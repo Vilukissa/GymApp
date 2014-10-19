@@ -20,7 +20,6 @@ public abstract class BaseFragment extends Fragment {
     private final OperationHandleHelper mOperationHandleHelper = new OperationHandleHelper();
     private Navigator mNavigator = ComponentProvider.get().getComponent(Navigator.class);
 
-    private View mBaseView;
     private View mContent;
     private View mProgress;
     private View mError;
@@ -36,20 +35,27 @@ public abstract class BaseFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mOperationHandleHelper.onCreate(savedInstanceState);
+        try {
+            mOperationHandleHelper.onCreate(savedInstanceState, this);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         int layoutResource = getLayoutResource();
-        boolean useProgressAndError = useProgressAndError();
-        mBaseView = inflater.inflate(layoutResource, container, false);
-        if (useProgressAndError) {
-            mContent = mBaseView.findViewById(R.id.contentLayout);
-            mProgress = mBaseView.findViewById(R.id.progressLayout);
-            mError = mBaseView.findViewById(R.id.errorLayout);
+        if (layoutResource != -1) {
+            boolean useProgressAndError = useProgressAndError();
+            View baseView = inflater.inflate(layoutResource, container, false);
+            if (useProgressAndError) {
+                mContent = baseView.findViewById(R.id.contentLayout);
+                mProgress = baseView.findViewById(R.id.progressLayout);
+                mError = baseView.findViewById(R.id.errorLayout);
+            }
+            return baseView;
         }
-        return mBaseView;
+        return super.onCreateView(inflater, container, savedInstanceState);
     }
 
     @Override

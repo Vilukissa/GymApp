@@ -4,7 +4,6 @@ import android.util.LruCache;
 
 import com.calicode.gymapp.app.model.OperationHandle.OperationHandleConfig;
 import com.calicode.gymapp.app.network.JsonOperation;
-import com.calicode.gymapp.app.network.JsonOperation.OnOperationCompleteListener;
 import com.calicode.gymapp.app.util.Log;
 import com.calicode.gymapp.app.util.componentprovider.ComponentProvider;
 import com.calicode.gymapp.app.util.componentprovider.componentinterfaces.SessionComponent;
@@ -39,6 +38,7 @@ public abstract class OperationModel implements SessionComponent {
         mHandleCache = new LruCache<String, OperationHandle>(cacheSize());
     }
 
+    @SuppressWarnings("unchecked")
     public OperationModel(OperationHandleConfig... configs) {
         this();
         mConfigs = new ArrayList(Arrays.asList(configs));
@@ -64,11 +64,7 @@ public abstract class OperationModel implements SessionComponent {
         if (handle == null) {
             // Cases 1 & 4 & 5
             Log.debug("Creating new operation handle and executing");
-            if (mConfigs.contains(OperationHandleConfig.USE_INTERNAL_LISTENER)) {
-                handle = new OperationHandle(operationId, (OnOperationCompleteListener) this, mConfigs);
-            } else {
-                handle = new OperationHandle(operationId, this, mConfigs);
-            }
+            handle = new OperationHandle(operationId, this, mConfigs);
             mHandleCache.put(operationId, handle);
             operation.execute(handle);
         } else {
@@ -82,6 +78,10 @@ public abstract class OperationModel implements SessionComponent {
     protected void removeHandle(String operationId) {
         Log.debug("Removing operation handle from operation handle cache");
         mHandleCache.remove(operationId);
+    }
+
+    public OperationHandle getOperationHandle(String operationId) {
+        return mHandleCache.get(operationId);
     }
 
     public void clearCache() {

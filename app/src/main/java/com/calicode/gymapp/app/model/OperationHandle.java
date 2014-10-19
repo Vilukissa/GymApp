@@ -9,7 +9,8 @@ import java.util.List;
 public class OperationHandle implements OnOperationCompleteListener {
 
     public enum OperationHandleConfig {
-        DONT_CACHE, USE_INTERNAL_LISTENER;
+        DONT_CACHE,
+        USE_INTERNAL_LISTENER
     }
 
     private final String mOperationId;
@@ -17,6 +18,7 @@ public class OperationHandle implements OnOperationCompleteListener {
 
     private Object mResult;
     private boolean mUseCache = true;
+    private boolean mUsePersistentCache;
 
     private OnOperationCompleteListener mExternalListener;
     private OnOperationCompleteListener mInternalListener;
@@ -30,71 +32,98 @@ public class OperationHandle implements OnOperationCompleteListener {
     public OperationHandle(String operationId, OperationModel operationModel, List<OperationHandleConfig> configs) {
         this(operationId, operationModel);
         mUseCache = !configs.contains(OperationHandleConfig.DONT_CACHE);
-    }
-
-    public OperationHandle(String operationId, OnOperationCompleteListener internalListener, List<OperationHandleConfig> configs) {
-        this(operationId, (OperationModel) internalListener, configs);
-        mInternalListener = internalListener;
+        if (configs.contains(OperationHandleConfig.USE_INTERNAL_LISTENER)) {
+            mInternalListener = (OnOperationCompleteListener) operationModel;
+        }
     }
 
     @Override
     public void onSuccess(Object data) {
-        if (mInternalListener != null) {
-            mInternalListener.onSuccess(data);
-        }
-        if (mUseCache) {
+        if (mUseCache || mUsePersistentCache) {
             Log.debug("Caching data");
             mResult = data;
         }
-        returnSuccessResult(data, mExternalListener);
+        if (mInternalListener != null) {
+            mInternalListener.onSuccess(data);
+        }
+        returnSuccessResult(data);
     }
 
     @Override
     public void onFailure(RequestError error) {
+        if (mUsePersistentCache) {
+            Log.debug("Caching error");
+            mResult = error;
+        }
         if (mInternalListener != null) {
             mInternalListener.onFailure(error);
         }
-        returnErrorResult(error, mExternalListener);
+        returnErrorResult(error);
     }
 
-    private void returnSuccessResult(Object result, OnOperationCompleteListener listener) {
+    private void returnSuccessResult(Object result) {
         if (mIsActive) {
             Log.debug("Returning success result to fragment");
-            listener.onSuccess(result);
+            mExternalListener.onSuccess(result);
         }
-        if (!mUseCache) {
+        if (!mUseCache && !mUsePersistentCache) {
             mOperationModel.removeHandle(mOperationId);
         }
     }
 
-    private void returnErrorResult(RequestError result, OnOperationCompleteListener listener) {
+    private void returnErrorResult(RequestError result) {
         if (mIsActive) {
             Log.debug("Returning error result to fragment");
-            listener.onFailure(result);
+            mExternalListener.onFailure(result);
         }
-        mOperationModel.removeHandle(mOperationId);
+        if (!mUsePersistentCache) {
+            mOperationModel.removeHandle(mOperationId);
+        }
     }
 
-    protected void setListener(OnOperationCompleteListener listener) {
+    protected void setListener(OnOperationCompleteListener listener, boolean isPersistent) {
         mIsActive = true;
+        mUsePersistentCache = isPersistent;
+        mExternalListener = listener;
 
+        notifyListenerIfResultCached();
+    }
+
+    private void notifyListenerIfResultCached() {
         if (mResult instanceof RequestError) {
-            Log.debug("Cached error");
-            returnErrorResult((RequestError) mResult, listener);
+            Log.debug("Error was cached");
+            returnErrorResult((RequestError) mResult);
+
         } else if (mResult != null) {
-            Log.debug("Cached result");
-            returnSuccessResult(mResult, listener);
-        } else {
-            mResult = null;
-            mExternalListener = listener;
+            Log.debug("Result was cached");
+            returnSuccessResult(mResult);
         }
+    }
+
+    public void updateListener(OnOperationCompleteListener listener) {
+        mExternalListener = listener;
     }
 
     public void notifyOnResume() {
         mIsActive = true;
+        if (mUsePersistentCache) {
+            notifyListenerIfResultCached();
+        }
     }
 
     public void notifyOnPause() {
         mIsActive = false;
+    }
+
+    public Class<?> getOperationModelClass() {
+        return mOperationModel.getClass();
+    }
+
+    public String getOperationId() {
+        return mOperationId;
+    }
+
+    public OnOperationCompleteListener getExternalListener() {
+        return mExternalListener;
     }
 }
