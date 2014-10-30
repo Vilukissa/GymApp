@@ -13,6 +13,7 @@ import com.calicode.gymapp.app.model.OperationHandleHelper;
 import com.calicode.gymapp.app.navigation.NavigationLocation;
 import com.calicode.gymapp.app.navigation.Navigator;
 import com.calicode.gymapp.app.network.JsonOperation;
+import com.calicode.gymapp.app.util.Log;
 import com.calicode.gymapp.app.util.componentprovider.ComponentProvider;
 
 public abstract class BaseFragment extends Fragment {
@@ -38,7 +39,8 @@ public abstract class BaseFragment extends Fragment {
         try {
             mOperationHandleHelper.onCreate(savedInstanceState, this);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.error("Could not use " + mOperationHandleHelper.getClass().getSimpleName()
+                    + "'s onCreate method", ex);
         }
     }
 

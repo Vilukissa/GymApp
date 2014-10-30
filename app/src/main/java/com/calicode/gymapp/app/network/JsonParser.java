@@ -41,8 +41,7 @@ public class JsonParser {
             throw error;
 
         } catch (Exception ex) {
-            Log.error("Parsing error!");
-            ex.printStackTrace();
+            Log.error("Parsing error", ex);
         }
         return null;
     }

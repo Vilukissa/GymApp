@@ -16,4 +16,8 @@ public class Log {
     public static void error(String text) {
         android.util.Log.e(GymApp.sAppContext.getString(R.string.app_name), text);
     }
+
+    public static void error(String text, Throwable throwable) {
+        android.util.Log.e(GymApp.sAppContext.getString(R.string.app_name), text, throwable);
+    }
 }

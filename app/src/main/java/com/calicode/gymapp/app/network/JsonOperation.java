@@ -33,9 +33,10 @@ public abstract class JsonOperation {
     }
 
     public void execute(OperationHandle operationHandle) {
-        Log.debug("JSON body: " + getParams());
+        final String jsonBody = createJsonBody();
+        Log.debug("JSON body: " + jsonBody);
 
-        JsonRequest request = new JsonRequest(mMethod, createUrl(), createJsonBody(), mParser);
+        JsonRequest request = new JsonRequest(mMethod, createUrl(), jsonBody, mParser);
         request.setRetryPolicy(new DefaultRetryPolicy(
                 SOCKET_TIMEOUT_MS,
                 DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
@@ -53,8 +54,8 @@ public abstract class JsonOperation {
         String json = "";
         try {
             json = Jackson.OBJECT_WRITER.writeValueAsString(getParams());
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception ex) {
+            Log.error("Jackson failed to write values to object", ex);
         }
         return json;
     }

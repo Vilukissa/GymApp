@@ -8,18 +8,19 @@ import java.security.MessageDigest;
 public class Encryption {
 
     public static String md5(String str) {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder builder = new StringBuilder();
         try {
             byte[] bytesOfMessage = str.getBytes("UTF-8");
             MessageDigest md = MessageDigest.getInstance("MD5");
             byte[] thedigest = md.digest(bytesOfMessage);
-            for (int i = 0; i < thedigest.length; ++i) {
-                sb.append(Integer.toHexString((thedigest[i] & 0xFF) | 0x100).substring(1,3));
+            for (byte aThedigest : thedigest) {
+                builder.append(Integer.toHexString((
+                        aThedigest & 0xFF) | 0x100).substring(1, 3));
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.error("Creating MD5 hash failed", ex);
         }
-        return sb.toString();
+        return builder.toString();
     }
 
     public static String generateSharedKey() {
@@ -29,7 +30,6 @@ public class Encryption {
     public static String generateLoginToken(String username, String password) {
         String authToken = ComponentProvider.get().getComponent(UserSessionManager.class)
                 .getAuthenticationData().getAuthToken();
-        String loginToken = md5(username + authToken + password);
-        return loginToken;
+        return md5(username + authToken + password);
     }
 }

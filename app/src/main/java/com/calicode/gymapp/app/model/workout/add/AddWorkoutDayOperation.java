@@ -4,7 +4,6 @@ import com.android.volley.Request.Method;
 import com.calicode.gymapp.app.model.workout.WorkoutMove;
 import com.calicode.gymapp.app.network.JsonOperation;
 import com.calicode.gymapp.app.network.JsonParser;
-import com.calicode.gymapp.app.util.Jackson;
 
 import java.util.List;
 
@@ -26,6 +25,6 @@ public class AddWorkoutDayOperation extends JsonOperation {
 
     @Override
     public Object getParams() {
-        return new AddWorkoutDayPostData(mDay, mWorkoutMoves);
+        return mWorkoutMoves;
     }
 }

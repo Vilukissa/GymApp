@@ -61,7 +61,7 @@ public class VolleyHandler implements SessionComponent {
             try {
                 mCookieManager.put(new URI(url), cookies);
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.error("Failed to store cookie", e);
             }
         }
     }

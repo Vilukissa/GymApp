@@ -63,8 +63,8 @@ public final class ComponentProvider implements ComponentInitializer {
             try {
                 taskComponent = clazz.newInstance();
                 mTaskComponents.put(clazz, taskComponent);
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (Exception ex) {
+                Log.error("Could not instantiate class " + clazz.getSimpleName(), ex);
             }
         }
         return (T) taskComponent;
