@@ -20,12 +20,12 @@ import com.calicode.gymapp.app.network.JsonOperation.OnOperationCompleteListener
 import com.calicode.gymapp.app.network.RequestError;
 import com.calicode.gymapp.app.util.Formatter;
 import com.calicode.gymapp.app.util.componentprovider.ComponentProvider;
-import com.calicode.gymapp.app.view.BaseFragment;
+import com.calicode.gymapp.app.view.NetworkRequestFragment;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class AddWorkoutFragment extends BaseFragment implements OnClickListener {
+public class AddWorkoutFragment extends NetworkRequestFragment implements OnClickListener {
 
     private LinearLayout mMovesContainer;
     private OnClickListener mSetRowAddButtonOnClickListener = new OnClickListener() {
@@ -75,6 +75,11 @@ public class AddWorkoutFragment extends BaseFragment implements OnClickListener 
     @Override
     protected int getLayoutResource() {
         return R.layout.add_workout;
+    }
+
+    @Override
+    public void errorOnClick() {
+        showContent();
     }
 
     @Override

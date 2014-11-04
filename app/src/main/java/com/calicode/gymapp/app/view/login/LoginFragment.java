@@ -13,13 +13,18 @@ import com.calicode.gymapp.app.navigation.NavigationLocation;
 import com.calicode.gymapp.app.network.JsonOperation.OnOperationCompleteListener;
 import com.calicode.gymapp.app.network.RequestError;
 import com.calicode.gymapp.app.util.componentprovider.ComponentProvider;
-import com.calicode.gymapp.app.view.BaseFragment;
+import com.calicode.gymapp.app.view.NetworkRequestFragment;
 
-public class LoginFragment extends BaseFragment {
+public class LoginFragment extends NetworkRequestFragment {
 
     @Override
     protected int getLayoutResource() {
         return R.layout.login_form;
+    }
+
+    @Override
+    public void errorOnClick() {
+        showContent();
     }
 
     @Override

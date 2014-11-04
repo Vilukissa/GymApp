@@ -16,18 +16,22 @@ import com.calicode.gymapp.app.model.workout.days.WorkoutDaysModel;
 import com.calicode.gymapp.app.navigation.NavigationLocation;
 import com.calicode.gymapp.app.network.JsonOperation.OnOperationCompleteListener;
 import com.calicode.gymapp.app.network.RequestError;
-import com.calicode.gymapp.app.util.Log;
 import com.calicode.gymapp.app.util.componentprovider.ComponentProvider;
-import com.calicode.gymapp.app.view.BaseFragment;
+import com.calicode.gymapp.app.view.NetworkRequestFragment;
 import com.calicode.gymapp.app.view.workout.daydetails.WorkoutDayDetailsTaskModel;
 
-public class WorkoutDaysFragment extends BaseFragment implements OnItemClickListener {
+public class WorkoutDaysFragment extends NetworkRequestFragment implements OnItemClickListener {
 
     private ListView mList;
 
     @Override
     protected int getLayoutResource() {
         return R.layout.workout_days;
+    }
+
+    @Override
+    public void errorOnClick() {
+        fetchWorkoutDays();
     }
 
     @Override
@@ -40,14 +44,17 @@ public class WorkoutDaysFragment extends BaseFragment implements OnItemClickList
     @Override
     public void onResume() {
         super.onResume();
+        fetchWorkoutDays();
+    }
 
+    private void fetchWorkoutDays() {
         showProgress();
+
         OperationHandle handle = ComponentProvider.get().getComponent(WorkoutDaysModel.class).fetchWorkoutDays();
         OnOperationCompleteListener listener = new OnOperationCompleteListener() {
 
             @Override
             public void onSuccess(Object data) {
-                Log.debug("Workouts fetched");
                 WorkoutDaysData workoutDaysData = (WorkoutDaysData) data;
                 WorkoutDaysListAdapter adapter = new WorkoutDaysListAdapter(
                         getActivity(), workoutDaysData.getWorkoutList());
@@ -58,7 +65,6 @@ public class WorkoutDaysFragment extends BaseFragment implements OnItemClickList
 
             @Override
             public void onFailure(RequestError error) {
-                Log.debug("ERRRO WORKOUTS NOT FETCHED");
                 setErrorText(error.getErrorMessage());
                 showError();
             }

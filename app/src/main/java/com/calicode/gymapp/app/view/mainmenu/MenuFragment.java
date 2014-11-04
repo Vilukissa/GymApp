@@ -15,11 +15,6 @@ import com.calicode.gymapp.app.view.BaseFragment;
 public class MenuFragment extends BaseFragment implements OnClickListener {
 
     @Override
-    protected boolean useProgressAndError() {
-        return false;
-    }
-
-    @Override
     protected int getLayoutResource() {
         return R.layout.main_menu;
     }

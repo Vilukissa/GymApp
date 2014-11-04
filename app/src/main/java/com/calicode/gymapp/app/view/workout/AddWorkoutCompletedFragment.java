@@ -14,11 +14,6 @@ import com.calicode.gymapp.app.view.BaseFragment;
 public class AddWorkoutCompletedFragment extends BaseFragment {
 
     @Override
-    protected boolean useProgressAndError() {
-        return false;
-    }
-
-    @Override
     protected int getLayoutResource() {
         return R.layout.add_workout_completed;
     }

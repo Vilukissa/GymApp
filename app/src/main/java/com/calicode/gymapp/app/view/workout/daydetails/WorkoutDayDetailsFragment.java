@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.calicode.gymapp.app.R;
 import com.calicode.gymapp.app.model.workout.WorkoutDay;
@@ -13,11 +12,6 @@ import com.calicode.gymapp.app.util.componentprovider.ComponentProvider;
 import com.calicode.gymapp.app.view.BaseFragment;
 
 public class WorkoutDayDetailsFragment extends BaseFragment {
-
-    @Override
-    protected boolean useProgressAndError() {
-        return false;
-    }
 
     @Override
     protected int getLayoutResource() {
@@ -30,8 +24,7 @@ public class WorkoutDayDetailsFragment extends BaseFragment {
         WorkoutDayDetailsTaskModel taskModel = ComponentProvider.get().createOrGetTaskComponent(WorkoutDayDetailsTaskModel.class);
         WorkoutDay workoutDay = taskModel.getSelectedWorkoutDay();
 
-        TextView workoutDate = (TextView) view.findViewById(R.id.workoutDayDate);
-        workoutDate.setText(workoutDay.getDay());
+        setTextViewData(R.id.workoutDayDate, workoutDay.getDay());
 
         ListView moveList = (ListView) view.findViewById(R.id.workoutMoveList);
         moveList.setAdapter(new MoveListAdapter(getActivity(), workoutDay.getMoveList()));
