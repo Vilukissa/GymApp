@@ -3,6 +3,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fillViewport="true"
     android:clipToPadding="false">
 
     <LinearLayout
@@ -11,36 +12,45 @@
         android:orientation="vertical"
         android:padding="16dp">
 
-        <TextView
-            style="@style/Text28Black"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="24dp"
-            android:text="@string/menu_add_workout"/>
+        <include layout="@layout/common_error_and_progress_framelayout"/>
 
         <LinearLayout
-            android:id="@+id/workoutMoveRowContainer"
+            android:id="@+id/contentLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"/>
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-        <Button
-            android:id="@+id/addMoveButton"
-            style="@style/CommonButton"
-            android:layout_gravity="center"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:text="+"/>
+            <TextView
+                style="@style/Text28Black"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                android:text="@string/menu_add_workout"/>
 
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="16dp"/>
+            <LinearLayout
+                android:id="@+id/workoutMoveRowContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"/>
 
-        <Button
-            android:id="@+id/addWorkoutButton"
-            style="@style/CommonButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/workout_add"/>
+            <Button
+                android:id="@+id/addMoveButton"
+                style="@style/CommonButton"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center"
+                android:text="+"/>
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="16dp"/>
+
+            <Button
+                android:id="@+id/addWorkoutButton"
+                style="@style/CommonButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/workout_add"/>
+        </LinearLayout>
     </LinearLayout>
 </ScrollView>

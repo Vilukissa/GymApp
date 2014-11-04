@@ -5,7 +5,6 @@ import android.support.v4.app.Fragment;
 
 import com.calicode.gymapp.app.network.JsonOperation.OnOperationCompleteListener;
 import com.calicode.gymapp.app.util.componentprovider.ComponentProvider;
-import com.calicode.gymapp.app.util.componentprovider.componentinterfaces.SessionComponent;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
@@ -86,8 +85,13 @@ public class OperationHandleHelper {
         for (OperationHandle handle : mListeners) {
             handle.notifyOnPause();
         }
-        for (Entry<String, OperationHandle> entry : mPersistentListeners.entrySet()) {
+        Iterator<Entry<String, OperationHandle>> iterator = mPersistentListeners.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Entry<String, OperationHandle> entry = iterator.next();
             entry.getValue().notifyOnPause();
+            if (entry.getValue().isResultError()) {
+                iterator.remove();
+            }
         }
     }
 

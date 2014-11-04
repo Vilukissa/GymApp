@@ -18,6 +18,8 @@ import com.calicode.gymapp.app.util.componentprovider.ComponentProvider;
 
 public abstract class BaseFragment extends Fragment {
 
+    private static final String IS_ERROR_VISIBLE = "is_error_visible";
+
     private final OperationHandleHelper mOperationHandleHelper = new OperationHandleHelper();
     private Navigator mNavigator = ComponentProvider.get().getComponent(Navigator.class);
 
@@ -54,6 +56,11 @@ public abstract class BaseFragment extends Fragment {
                 mContent = baseView.findViewById(R.id.contentLayout);
                 mProgress = baseView.findViewById(R.id.progressLayout);
                 mError = baseView.findViewById(R.id.errorLayout);
+                if (savedInstanceState != null) {
+                    if (savedInstanceState.getBoolean(IS_ERROR_VISIBLE)) {
+                        showError();
+                    }
+                }
             }
             return baseView;
         }
@@ -76,6 +83,7 @@ public abstract class BaseFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         mOperationHandleHelper.onSaveInstanceState(outState);
+        outState.putBoolean(IS_ERROR_VISIBLE, mError.getVisibility() == View.VISIBLE);
     }
 
     protected View getErrorView() {
@@ -87,11 +95,13 @@ public abstract class BaseFragment extends Fragment {
     }
 
     protected void showContent() {
+        mError.setVisibility(View.GONE);
         mProgress.setVisibility(View.GONE);
         mContent.setVisibility(View.VISIBLE);
     }
 
     protected void showError() {
+        mContent.setVisibility(View.GONE);
         mProgress.setVisibility(View.GONE);
         mError.setVisibility(View.VISIBLE);
     }

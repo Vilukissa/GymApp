@@ -5,16 +5,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.ViewParent;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.calicode.gymapp.app.R;
+import com.calicode.gymapp.app.model.OperationHandle;
 import com.calicode.gymapp.app.model.workout.WorkoutMove;
 import com.calicode.gymapp.app.model.workout.WorkoutSet;
 import com.calicode.gymapp.app.model.workout.add.AddWorkoutDayModel;
+import com.calicode.gymapp.app.navigation.NavigationLocation;
+import com.calicode.gymapp.app.network.JsonOperation.OnOperationCompleteListener;
+import com.calicode.gymapp.app.network.RequestError;
+import com.calicode.gymapp.app.util.Formatter;
 import com.calicode.gymapp.app.util.componentprovider.ComponentProvider;
 import com.calicode.gymapp.app.view.BaseFragment;
 
@@ -67,11 +71,6 @@ public class AddWorkoutFragment extends BaseFragment implements OnClickListener 
             }
         }
     };
-
-    @Override
-    protected boolean useProgressAndError() {
-        return false;
-    }
 
     @Override
     protected int getLayoutResource() {
@@ -129,11 +128,27 @@ public class AddWorkoutFragment extends BaseFragment implements OnClickListener 
     }
 
     private void addWorkout() {
-        // TODO: day field
-        String day = "28.02.2014";
+        showProgress();
 
+        // TODO: day field
+        String day = Formatter.changeDateStringFormat("28.10.2014",
+                Formatter.DAY_MONTH_YEAR_WITH_DOTS, Formatter.YEAR_MONTH_DAY_WITH_DASHES);
         List<WorkoutMove> moves = buildMoveList();
-        ComponentProvider.get().getComponent(AddWorkoutDayModel.class).addWorkout(day, moves);
+
+        OperationHandle handle = ComponentProvider.get().getComponent(AddWorkoutDayModel.class).addWorkout(day, moves);
+        OnOperationCompleteListener listener = new OnOperationCompleteListener() {
+            @Override
+            public void onSuccess(Object data) {
+                navigateToLocation(NavigationLocation.ADD_WORKOUT_COMPLETED);
+            }
+
+            @Override
+            public void onFailure(RequestError error) {
+                setErrorText(error.getErrorMessage());
+                showError();
+            }
+        };
+        attachPersistentListener(handle, listener);
     }
 
     private List<WorkoutMove> buildMoveList() {
