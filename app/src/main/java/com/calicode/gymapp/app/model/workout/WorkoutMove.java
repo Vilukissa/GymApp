@@ -1,5 +1,6 @@
 package com.calicode.gymapp.app.model.workout;
 
+import com.calicode.gymapp.app.model.workout.movename.MoveNameData;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.ArrayList;
@@ -11,7 +12,7 @@ public class WorkoutMove {
     private String mMoveId;
 
     @JsonProperty("moveNameId")
-    private String mMoveNameId;
+    private int mMoveNameId;
 
     @JsonProperty("moveName")
     private String mMoveName;
@@ -23,7 +24,7 @@ public class WorkoutMove {
         return mMoveId;
     }
 
-    public String getMoveNameId() {
+    public int getMoveNameId() {
         return mMoveNameId;
     }
 
@@ -37,9 +38,10 @@ public class WorkoutMove {
 
     private WorkoutMove() {}
 
-    public static WorkoutMove build(String name, List<WorkoutSet> sets) {
+    public static WorkoutMove build(MoveNameData nameData, List<WorkoutSet> sets) {
         WorkoutMove move = new WorkoutMove();
-        move.mMoveName = name;
+        move.mMoveNameId = nameData.getNameId();
+        move.mMoveName = nameData.getName();
         move.mSetList = sets;
         return move;
     }

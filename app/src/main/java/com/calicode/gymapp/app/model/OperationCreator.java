@@ -6,6 +6,7 @@ import com.calicode.gymapp.app.model.logout.LogoutOperation;
 import com.calicode.gymapp.app.model.workout.WorkoutMove;
 import com.calicode.gymapp.app.model.workout.add.AddWorkoutDayOperation;
 import com.calicode.gymapp.app.model.workout.days.WorkoutDaysOperation;
+import com.calicode.gymapp.app.model.workout.movename.MoveNameOperation;
 import com.calicode.gymapp.app.network.JsonOperation;
 import com.calicode.gymapp.app.util.componentprovider.componentinterfaces.Component;
 
@@ -31,5 +32,9 @@ public class OperationCreator implements Component {
 
     public JsonOperation getAddWorkoutDayOperation(String day, List<WorkoutMove> workoutMoves) {
         return new AddWorkoutDayOperation(day, workoutMoves);
+    }
+
+    public JsonOperation getMoveNameOperation() {
+        return new MoveNameOperation();
     }
 }
