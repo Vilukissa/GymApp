@@ -6,8 +6,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.calicode.gymapp.app.R;
@@ -15,10 +15,13 @@ import com.calicode.gymapp.app.model.OperationHandle;
 import com.calicode.gymapp.app.model.workout.WorkoutMove;
 import com.calicode.gymapp.app.model.workout.WorkoutSet;
 import com.calicode.gymapp.app.model.workout.add.AddWorkoutDayModel;
+import com.calicode.gymapp.app.model.workout.movename.MoveNameData;
+import com.calicode.gymapp.app.model.workout.movename.MoveNameModel;
 import com.calicode.gymapp.app.navigation.NavigationLocation;
 import com.calicode.gymapp.app.network.JsonOperation.OnOperationCompleteListener;
 import com.calicode.gymapp.app.network.RequestError;
 import com.calicode.gymapp.app.util.Formatter;
+import com.calicode.gymapp.app.util.Log;
 import com.calicode.gymapp.app.util.componentprovider.ComponentProvider;
 import com.calicode.gymapp.app.view.NetworkRequestFragment;
 
@@ -27,7 +30,20 @@ import java.util.List;
 
 public class AddWorkoutFragment extends NetworkRequestFragment implements OnClickListener {
 
+    private static final String ERROR_TYPE = "error_type";
+    private static final String FIRST_FETCH = "first_fetch";
+
+
+    private enum ErrorType {
+        MOVE_NAME,
+        ADD_WORKOUT
+    }
+
+    private List<MoveNameData> mMoveNameList = new ArrayList<MoveNameData>();
     private LinearLayout mMovesContainer;
+    private ErrorType mErrorType;
+    private boolean mFirstFetch;
+
     private OnClickListener mSetRowAddButtonOnClickListener = new OnClickListener() {
         @Override
         public void onClick(View setRowAddButton) {
@@ -50,22 +66,21 @@ public class AddWorkoutFragment extends NetworkRequestFragment implements OnClic
             LinearLayout setRowContainer = (LinearLayout) moveRowItem.findViewById(R.id.setRowContainer);
             if (moveRowItem != null && setRowContainer != null) {
                 int setRowItemCount = setRowContainer.getChildCount();
-                View setRowItem = (View) setRowRemoveButton.getParent();
+                View setRowItem = (View) setRowRemoveButton.getParent().getParent();
 
-                if (setRowItemCount > 1) {
-                    String moveName = ((TextView) setRowItem.findViewById(R.id.moveNameEditText)).getText().toString();
-                    EditText firstViewBeforeRemove = (EditText) setRowContainer.getChildAt(0)
-                            .findViewById(R.id.moveNameEditText);
+                if (setRowItem != null && setRowItemCount > 1) {
+                    int moveNameSpinnerPosition = ((Spinner) setRowItem.findViewById(R.id.moveNameSpinner)).getSelectedItemPosition();
+                    Spinner firstViewBeforeRemove = (Spinner) setRowContainer.getChildAt(0)
+                            .findViewById(R.id.moveNameSpinner);
 
                     setRowContainer.removeView(setRowItem);
-
-                    EditText firstViewAfterRemove = (EditText) setRowContainer.getChildAt(0)
-                            .findViewById(R.id.moveNameEditText);
+                    Spinner firstViewAfterRemove = (Spinner) setRowContainer.getChildAt(0)
+                            .findViewById(R.id.moveNameSpinner);
 
                     firstViewAfterRemove.setVisibility(View.VISIBLE);
 
                     if (!firstViewBeforeRemove.equals(firstViewAfterRemove)) {
-                        firstViewAfterRemove.setText(moveName);
+                        firstViewAfterRemove.setSelection(moveNameSpinnerPosition);
                     }
                 }
             }
@@ -79,7 +94,11 @@ public class AddWorkoutFragment extends NetworkRequestFragment implements OnClic
 
     @Override
     public void errorOnClick() {
-        showContent();
+        if (mErrorType == ErrorType.ADD_WORKOUT) {
+            showContent();
+        } else if (mErrorType == ErrorType.MOVE_NAME) {
+            fetchMoveNames();
+        }
     }
 
     @Override
@@ -87,12 +106,63 @@ public class AddWorkoutFragment extends NetworkRequestFragment implements OnClic
         View view = super.onCreateView(inflater, container, savedInstanceState);
 
         mMovesContainer = (LinearLayout) view.findViewById(R.id.workoutMoveRowContainer);
-        addMoveRowItem();
 
         view.findViewById(R.id.addMoveButton).setOnClickListener(this);
         view.findViewById(R.id.addWorkoutButton).setOnClickListener(this);
 
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(ERROR_TYPE)) {
+                mErrorType = (ErrorType) savedInstanceState.getSerializable(ERROR_TYPE);
+            }
+        } else {
+            mFirstFetch = true;
+        }
+
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        fetchMoveNames();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (mErrorType != null) {
+            outState.putSerializable(ERROR_TYPE, mErrorType);
+        }
+        outState.putBoolean(FIRST_FETCH, mFirstFetch);
+    }
+
+    private void fetchMoveNames() {
+        showProgress();
+
+        OperationHandle handle = ComponentProvider.get().getComponent(MoveNameModel.class).fetchMoveNames();
+        OnOperationCompleteListener listener = new OnOperationCompleteListener() {
+            @SuppressWarnings("unchecked")
+            @Override
+            public void onSuccess(Object data) {
+                mErrorType = null;
+                mMoveNameList = (List<MoveNameData>) data;
+                if (mFirstFetch) {
+                    addMoveRowItem();
+                } else {
+                    // TODO: return previously added items
+                    Log.error("NOT IMPLEMENTED YET!");
+                }
+                showContent();
+            }
+
+            @Override
+            public void onFailure(RequestError error) {
+                mErrorType = ErrorType.MOVE_NAME;
+                setErrorText(error.getErrorMessage());
+                showError();
+            }
+        };
+        attachListener(handle, listener);
     }
 
     private void addMoveRowItem() {
@@ -110,9 +180,13 @@ public class AddWorkoutFragment extends NetworkRequestFragment implements OnClic
         View setRowItem = LayoutInflater.from(getActivity()).inflate(R.layout.set_item, setRowContainer, false);
 
         if (setRowItem != null) {
+            Spinner moveNameSpinner = (Spinner) setRowItem.findViewById(R.id.moveNameSpinner);
             if (setRowContainer.getChildCount() > 0) {
-                setRowItem.findViewById(R.id.moveNameEditText).setVisibility(View.INVISIBLE);
+                moveNameSpinner.setVisibility(View.GONE);
             }
+
+            moveNameSpinner.setAdapter(MoveNameAdapter.create(getActivity(), mMoveNameList));
+
             View addSetButton = setRowItem.findViewById(R.id.addSetButton);
             addSetButton.setOnClickListener(mSetRowAddButtonOnClickListener);
             addSetButton.setTag(moveRowItem);
@@ -144,11 +218,13 @@ public class AddWorkoutFragment extends NetworkRequestFragment implements OnClic
         OnOperationCompleteListener listener = new OnOperationCompleteListener() {
             @Override
             public void onSuccess(Object data) {
+                mErrorType = null;
                 navigateToLocation(NavigationLocation.ADD_WORKOUT_COMPLETED);
             }
 
             @Override
             public void onFailure(RequestError error) {
+                mErrorType = ErrorType.ADD_WORKOUT;
                 setErrorText(error.getErrorMessage());
                 showError();
             }
@@ -165,12 +241,12 @@ public class AddWorkoutFragment extends NetworkRequestFragment implements OnClic
 
             List<WorkoutSet> sets = new ArrayList<WorkoutSet>();
             int setCount = moveItem.getChildCount();
-            TextView nameField = null;
+            Spinner moveNameSpinner = null;
 
             for (int z = 0; z < setCount; ++z) {
                 View setItem = moveItem.getChildAt(z);
                 if (z == 0) {
-                    nameField = (TextView) setItem.findViewById(R.id.moveNameEditText);
+                    moveNameSpinner = (Spinner) setItem.findViewById(R.id.moveNameSpinner);
                 }
                 TextView setCountField = (TextView) setItem.findViewById(R.id.moveSetCountEditText);
                 TextView repCountField = (TextView) setItem.findViewById(R.id.moveRepCountEditText);
@@ -182,9 +258,11 @@ public class AddWorkoutFragment extends NetworkRequestFragment implements OnClic
                         weightField.getText().toString());
                 sets.add(set);
             }
-            WorkoutMove move = WorkoutMove.build(
-                    nameField.getText().toString(),
-                    sets);
+
+            int selectedPosition = moveNameSpinner.getSelectedItemPosition();
+            MoveNameData moveNameData = ((MoveNameAdapter) moveNameSpinner.getAdapter())
+                    .getMoveNameData(selectedPosition);
+            WorkoutMove move = WorkoutMove.build(moveNameData, sets);
             moves.add(move);
         }
 

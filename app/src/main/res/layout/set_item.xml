@@ -1,62 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:gravity="center">
 
-    <EditText
-        android:id="@+id/moveNameEditText"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"/>
-
-    <Space
-        android:layout_width="8dp"
+    <Spinner
+        android:id="@+id/moveNameSpinner"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
-    <EditText
-        android:id="@+id/moveSetCountEditText"
-        android:layout_width="0dp"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="0.5"
-        android:maxEms="2"
-        android:inputType="number"/>
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp">
 
-    <Space
-        android:layout_width="8dp"
-        android:layout_height="wrap_content"/>
+        <EditText
+            android:id="@+id/moveSetCountEditText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:inputType="number"
+            android:maxEms="2"/>
 
-    <EditText
-        android:id="@+id/moveRepCountEditText"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="0.5"
-        android:maxEms="2"
-        android:inputType="number"/>
+        <Space
+            android:layout_width="8dp"
+            android:layout_height="wrap_content"/>
 
-    <Space
-        android:layout_width="8dp"
-        android:layout_height="wrap_content"/>
+        <EditText
+            android:id="@+id/moveRepCountEditText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.5"
+            android:inputType="number"
+            android:maxEms="2"/>
 
-    <EditText
-        android:id="@+id/moveWeightEditText"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_weight="0.7"
-        android:maxEms="6"
-        android:inputType="numberDecimal"/>
+        <Space
+            android:layout_width="8dp"
+            android:layout_height="wrap_content"/>
 
-    <Space
-        android:layout_width="8dp"
-        android:layout_height="wrap_content"/>
+        <EditText
+            android:id="@+id/moveWeightEditText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.7"
+            android:inputType="numberDecimal"
+            android:maxEms="6"/>
 
-    <Button
-        android:id="@+id/addSetButton"
-        style="@style/CommonButton"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:text="+"/>
+        <Space
+            android:layout_width="8dp"
+            android:layout_height="wrap_content"/>
 
+        <Button
+            android:id="@+id/addSetButton"
+            style="@style/CommonButton"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:text="+"/>
+    </LinearLayout>
 </LinearLayout>
