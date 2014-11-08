@@ -20,7 +20,6 @@ import com.calicode.gymapp.app.navigation.NavigationLocation;
 import com.calicode.gymapp.app.network.JsonOperation.OnOperationCompleteListener;
 import com.calicode.gymapp.app.network.RequestError;
 import com.calicode.gymapp.app.util.Formatter;
-import com.calicode.gymapp.app.util.Log;
 import com.calicode.gymapp.app.util.componentprovider.ComponentProvider;
 import com.calicode.gymapp.app.view.NetworkRequestFragment;
 
@@ -35,9 +34,10 @@ public class AddWorkoutFragment extends NetworkRequestFragment implements OnClic
 
     private enum ErrorType {
         MOVE_NAME,
-        ADD_WORKOUT
+        ADD_WORKOUT;
     }
 
+    private AddWorkoutTaskModel mTaskModel;
     private List<MoveNameData> mMoveNameList = new ArrayList<MoveNameData>();
     private LinearLayout mMovesContainer;
     private ErrorType mErrorType;
@@ -114,6 +114,7 @@ public class AddWorkoutFragment extends NetworkRequestFragment implements OnClic
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = super.onCreateView(inflater, container, savedInstanceState);
 
+        mTaskModel = ComponentProvider.get().createOrGetTaskComponent(AddWorkoutTaskModel.class);
         mMovesContainer = (LinearLayout) view.findViewById(R.id.workoutMoveRowContainer);
 
         view.findViewById(R.id.addMoveButton).setOnClickListener(this);
@@ -143,6 +144,9 @@ public class AddWorkoutFragment extends NetworkRequestFragment implements OnClic
             outState.putSerializable(ERROR_TYPE, mErrorType);
         }
         outState.putBoolean(FIRST_FETCH, mFirstFetch);
+        if (!mFirstFetch) {
+            mTaskModel.setWorkoutMoveList(buildMoveList());
+        }
     }
 
     private void fetchMoveNames() {
@@ -159,8 +163,7 @@ public class AddWorkoutFragment extends NetworkRequestFragment implements OnClic
                     mFirstFetch = false;
                     addMoveRowItem();
                 } else {
-                    // TODO: return previously added items
-                    Log.error("NOT IMPLEMENTED YET!");
+                    buildUiFromExistingData();
                 }
                 showContent();
             }
@@ -175,23 +178,61 @@ public class AddWorkoutFragment extends NetworkRequestFragment implements OnClic
         attachListener(handle, listener);
     }
 
+    private void buildUiFromExistingData() {
+        List<WorkoutMove> workoutMoveList = mTaskModel.getWorkoutMoveList();
+        for (WorkoutMove workoutMove : workoutMoveList) {
+            addMoveRowItem(workoutMove);
+        }
+    }
+
     private void addMoveRowItem() {
+        addMoveRowItem(null);
+    }
+
+    private void addMoveRowItem(WorkoutMove workoutMove) {
         View moveRowItem = LayoutInflater.from(getActivity())
                 .inflate(R.layout.add_workout_container_item, mMovesContainer, false);
 
         if (moveRowItem != null) {
             Spinner moveNameSpinner = (Spinner) moveRowItem.findViewById(R.id.moveNameSpinner);
-            moveNameSpinner.setAdapter(MoveNameAdapter.create(getActivity(), mMoveNameList));
-            addSetRowItem((LinearLayout) moveRowItem);
+            MoveNameAdapter adapter = MoveNameAdapter.create(getActivity(), mMoveNameList);
+            moveNameSpinner.setAdapter(adapter);
+
+            if (workoutMove != null) {
+                int spinnerPosition = adapter.findPosition(workoutMove);
+                moveNameSpinner.setSelection(spinnerPosition);
+
+                int setCount = workoutMove.getSetList().size();
+                for (WorkoutSet set : workoutMove.getSetList()) {
+                    addSetRowItem((LinearLayout) moveRowItem, set, setCount);
+                }
+            } else {
+                // Add only one set item
+                addSetRowItem((LinearLayout) moveRowItem);
+            }
             mMovesContainer.addView(moveRowItem);
         }
     }
 
     private void addSetRowItem(LinearLayout moveRowItem) {
+        addSetRowItem(moveRowItem, null, 0);
+    }
+
+    private void addSetRowItem(LinearLayout moveRowItem, WorkoutSet workoutSet, int setCount) {
         LinearLayout setRowContainer = (LinearLayout) moveRowItem.findViewById(R.id.setRowContainer);
         View setRowItem = LayoutInflater.from(getActivity()).inflate(R.layout.set_item, setRowContainer, false);
 
         if (setRowItem != null) {
+            if (workoutSet != null) {
+                TextView setTextView = (TextView) setRowItem.findViewById(R.id.moveSetCountEditText);
+                TextView repTextView = (TextView) setRowItem.findViewById(R.id.moveRepCountEditText);
+                TextView weightTextView = (TextView) setRowItem.findViewById(R.id.moveWeightEditText);
+
+                setTextView.setText(workoutSet.getSetCount());
+                repTextView.setText(workoutSet.getRepCount());
+                weightTextView.setText(workoutSet.getWeight());
+            }
+
             View addSetButton = setRowItem.findViewById(R.id.addSetButton);
             addSetButton.setOnClickListener(mSetRowAddButtonOnClickListener);
             addSetButton.setTag(moveRowItem);
@@ -199,9 +240,14 @@ public class AddWorkoutFragment extends NetworkRequestFragment implements OnClic
             View removeSetButton = setRowItem.findViewById(R.id.removeSetButton);
             removeSetButton.setTag(moveRowItem);
 
+            // Hide Add button from previous set item and show Remove button from new set item
             if (setRowContainer.getChildCount() > 0) {
                 setRowContainer.getChildAt(setRowContainer.getChildCount()-1)
                         .findViewById(R.id.addSetButton).setVisibility(View.INVISIBLE);
+                removeSetButton.setOnClickListener(mSetRowRemoveButtonOnClickListener);
+                removeSetButton.setVisibility(View.VISIBLE);
+
+            } else if (setCount > 1) {
                 removeSetButton.setOnClickListener(mSetRowRemoveButtonOnClickListener);
                 removeSetButton.setVisibility(View.VISIBLE);
             }
@@ -235,6 +281,7 @@ public class AddWorkoutFragment extends NetworkRequestFragment implements OnClic
             @Override
             public void onSuccess(Object data) {
                 mErrorType = null;
+                ComponentProvider.get().destroyTaskComponent(AddWorkoutTaskModel.class);
                 navigateToLocation(NavigationLocation.ADD_WORKOUT_COMPLETED);
             }
 

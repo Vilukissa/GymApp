@@ -3,10 +3,12 @@ package com.calicode.gymapp.app.view.workout;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.LinearLayout;
 
 import com.calicode.gymapp.app.R;
+import com.calicode.gymapp.app.model.workout.WorkoutMove;
 import com.calicode.gymapp.app.model.workout.movename.MoveNameData;
 
 import java.util.ArrayList;
@@ -42,5 +44,14 @@ public class MoveNameAdapter extends ArrayAdapter<String> {
         LinearLayout linearLayout = (LinearLayout) super.getView(position, convertView, parent);
         linearLayout.setPadding(0, 0, 0, 0);
         return linearLayout;
+    }
+
+    public int findPosition(WorkoutMove workoutMove) {
+        for (int i = 0; i < mItems.size(); ++i) {
+            if (mItems.get(i).getNameId() == workoutMove.getMoveNameId()) {
+                return i;
+            }
+        }
+        return AdapterView.INVALID_POSITION;
     }
 }
