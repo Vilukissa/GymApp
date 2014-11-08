@@ -18,7 +18,8 @@
             android:id="@+id/contentLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:splitMotionEvents="false">
 
             <TextView
                 style="@style/Text28Black"
@@ -31,7 +32,8 @@
                 android:id="@+id/workoutMoveRowContainer"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"/>
+                android:orientation="vertical"
+                android:splitMotionEvents="false"/>
 
             <Button
                 android:id="@+id/addMoveButton"

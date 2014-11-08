@@ -6,11 +6,6 @@
     android:layout_height="wrap_content"
     android:gravity="center">
 
-    <Spinner
-        android:id="@+id/moveNameSpinner"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -50,7 +45,19 @@
             android:maxEms="6"/>
 
         <Space
-            android:layout_width="8dp"
+            android:layout_width="16dp"
+            android:layout_height="wrap_content"/>
+
+        <Button
+            android:id="@+id/removeSetButton"
+            style="@style/CommonButton"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:text="-"
+            android:visibility="invisible"/>
+
+        <Space
+            android:layout_width="32dp"
             android:layout_height="wrap_content"/>
 
         <Button

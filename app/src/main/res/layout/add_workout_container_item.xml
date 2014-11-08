@@ -20,7 +20,25 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/move_name"/>
+    </LinearLayout>
 
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="8dp"/>
+
+    <Spinner
+        android:id="@+id/moveNameSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="8dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
         <Space
             android:layout_width="8dp"
             android:layout_height="wrap_content"/>
@@ -52,11 +70,7 @@
             android:text="@string/move_weight"/>
 
         <Space
-            android:layout_width="8dp"
-            android:layout_height="wrap_content"/>
-
-        <Space
-            android:layout_width="30dp"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"/>
     </LinearLayout>
 
@@ -64,7 +78,8 @@
         android:id="@+id/setRowContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"/>
+        android:orientation="vertical"
+        android:splitMotionEvents="false"/>
 
     <Space
         android:layout_width="match_parent"

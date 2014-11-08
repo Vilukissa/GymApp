@@ -5,7 +5,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -32,7 +31,7 @@ public class AddWorkoutFragment extends NetworkRequestFragment implements OnClic
 
     private static final String ERROR_TYPE = "error_type";
     private static final String FIRST_FETCH = "first_fetch";
-
+    private static final int WORKOUT_MOVE_COUNT_LIMIT = 20;
 
     private enum ErrorType {
         MOVE_NAME,
@@ -48,39 +47,49 @@ public class AddWorkoutFragment extends NetworkRequestFragment implements OnClic
         @Override
         public void onClick(View setRowAddButton) {
             LinearLayout moveRowItem = (LinearLayout) setRowAddButton.getTag();
-            int setRowItemCount = ((LinearLayout) moveRowItem.findViewById(R.id.setRowContainer)).getChildCount();
+            LinearLayout setRowContainer = (LinearLayout) moveRowItem.findViewById(R.id.setRowContainer);
+            int setRowItemCount = setRowContainer.getChildCount();
 
-            setRowAddButton.setOnClickListener(mSetWorRemoveButtonOnClickListener);
-            ((Button) setRowAddButton).setText("-");
+            if (setRowItemCount < WORKOUT_MOVE_COUNT_LIMIT) {
+                // Show the Remove set button
+                if (setRowItemCount == 1) {
+                    View removeSetButton = setRowContainer.getChildAt(0).findViewById(R.id.removeSetButton);
+                    removeSetButton.setVisibility(View.VISIBLE);
+                    removeSetButton.setOnClickListener(mSetRowRemoveButtonOnClickListener);
+                }
+                // Hide the Add set button
+                View addSetButton = setRowContainer.getChildAt(0).findViewById(R.id.addSetButton);
+                addSetButton.findViewById(R.id.addSetButton).setVisibility(View.INVISIBLE);
 
-            if (setRowItemCount < 8) {
                 addSetRowItem(moveRowItem);
             }
         }
     };
 
-    private OnClickListener mSetWorRemoveButtonOnClickListener = new OnClickListener() {
+    private OnClickListener mSetRowRemoveButtonOnClickListener = new OnClickListener() {
         @Override
         public void onClick(View setRowRemoveButton) {
             LinearLayout moveRowItem = (LinearLayout) setRowRemoveButton.getTag();
             LinearLayout setRowContainer = (LinearLayout) moveRowItem.findViewById(R.id.setRowContainer);
-            if (moveRowItem != null && setRowContainer != null) {
+            if (setRowContainer != null) {
                 int setRowItemCount = setRowContainer.getChildCount();
                 View setRowItem = (View) setRowRemoveButton.getParent().getParent();
 
                 if (setRowItem != null && setRowItemCount > 1) {
-                    int moveNameSpinnerPosition = ((Spinner) setRowItem.findViewById(R.id.moveNameSpinner)).getSelectedItemPosition();
-                    Spinner firstViewBeforeRemove = (Spinner) setRowContainer.getChildAt(0)
-                            .findViewById(R.id.moveNameSpinner);
+                    // Last set removed so show Add button in previous set view
+                    if (setRowItem.equals(setRowContainer.getChildAt(setRowContainer.getChildCount()-1))) {
+                        setRowContainer.getChildAt(setRowContainer.getChildCount()-2).findViewById(R.id.addSetButton)
+                                .setVisibility(View.VISIBLE);
+                    }
 
+                    // Removes itself from the set list container
                     setRowContainer.removeView(setRowItem);
-                    Spinner firstViewAfterRemove = (Spinner) setRowContainer.getChildAt(0)
-                            .findViewById(R.id.moveNameSpinner);
 
-                    firstViewAfterRemove.setVisibility(View.VISIBLE);
-
-                    if (!firstViewBeforeRemove.equals(firstViewAfterRemove)) {
-                        firstViewAfterRemove.setSelection(moveNameSpinnerPosition);
+                    // Count before removeView call so it's now 1
+                    // Hide last item's Remove button
+                    if (setRowItemCount == 2) {
+                        View removeSetButton = setRowContainer.getChildAt(0).findViewById(R.id.removeSetButton);
+                        removeSetButton.setVisibility(View.INVISIBLE);
                     }
                 }
             }
@@ -147,6 +156,7 @@ public class AddWorkoutFragment extends NetworkRequestFragment implements OnClic
                 mErrorType = null;
                 mMoveNameList = (List<MoveNameData>) data;
                 if (mFirstFetch) {
+                    mFirstFetch = false;
                     addMoveRowItem();
                 } else {
                     // TODO: return previously added items
@@ -170,6 +180,8 @@ public class AddWorkoutFragment extends NetworkRequestFragment implements OnClic
                 .inflate(R.layout.add_workout_container_item, mMovesContainer, false);
 
         if (moveRowItem != null) {
+            Spinner moveNameSpinner = (Spinner) moveRowItem.findViewById(R.id.moveNameSpinner);
+            moveNameSpinner.setAdapter(MoveNameAdapter.create(getActivity(), mMoveNameList));
             addSetRowItem((LinearLayout) moveRowItem);
             mMovesContainer.addView(moveRowItem);
         }
@@ -180,16 +192,20 @@ public class AddWorkoutFragment extends NetworkRequestFragment implements OnClic
         View setRowItem = LayoutInflater.from(getActivity()).inflate(R.layout.set_item, setRowContainer, false);
 
         if (setRowItem != null) {
-            Spinner moveNameSpinner = (Spinner) setRowItem.findViewById(R.id.moveNameSpinner);
-            if (setRowContainer.getChildCount() > 0) {
-                moveNameSpinner.setVisibility(View.GONE);
-            }
-
-            moveNameSpinner.setAdapter(MoveNameAdapter.create(getActivity(), mMoveNameList));
-
             View addSetButton = setRowItem.findViewById(R.id.addSetButton);
             addSetButton.setOnClickListener(mSetRowAddButtonOnClickListener);
             addSetButton.setTag(moveRowItem);
+
+            View removeSetButton = setRowItem.findViewById(R.id.removeSetButton);
+            removeSetButton.setTag(moveRowItem);
+
+            if (setRowContainer.getChildCount() > 0) {
+                setRowContainer.getChildAt(setRowContainer.getChildCount()-1)
+                        .findViewById(R.id.addSetButton).setVisibility(View.INVISIBLE);
+                removeSetButton.setOnClickListener(mSetRowRemoveButtonOnClickListener);
+                removeSetButton.setVisibility(View.VISIBLE);
+            }
+
             setRowContainer.addView(setRowItem);
         }
     }
@@ -236,18 +252,15 @@ public class AddWorkoutFragment extends NetworkRequestFragment implements OnClic
         List<WorkoutMove> moves = new ArrayList<WorkoutMove>();
         int moveCount = mMovesContainer.getChildCount();
 
-        for (int i = 0; i < moveCount; ++i) {
-            LinearLayout moveItem = (LinearLayout) mMovesContainer.getChildAt(i).findViewById(R.id.setRowContainer);
+        for (int moveIndex = 0; moveIndex < moveCount; ++moveIndex) {
+            LinearLayout moveRowItem = (LinearLayout) mMovesContainer.getChildAt(moveIndex);
+            LinearLayout setRowContainer = (LinearLayout) moveRowItem.findViewById(R.id.setRowContainer);
 
             List<WorkoutSet> sets = new ArrayList<WorkoutSet>();
-            int setCount = moveItem.getChildCount();
-            Spinner moveNameSpinner = null;
+            int setCount = setRowContainer.getChildCount();
 
-            for (int z = 0; z < setCount; ++z) {
-                View setItem = moveItem.getChildAt(z);
-                if (z == 0) {
-                    moveNameSpinner = (Spinner) setItem.findViewById(R.id.moveNameSpinner);
-                }
+            for (int setIndex = 0; setIndex < setCount; ++setIndex) {
+                View setItem = setRowContainer.getChildAt(setIndex);
                 TextView setCountField = (TextView) setItem.findViewById(R.id.moveSetCountEditText);
                 TextView repCountField = (TextView) setItem.findViewById(R.id.moveRepCountEditText);
                 TextView weightField = (TextView) setItem.findViewById(R.id.moveWeightEditText);
@@ -259,6 +272,7 @@ public class AddWorkoutFragment extends NetworkRequestFragment implements OnClic
                 sets.add(set);
             }
 
+            Spinner moveNameSpinner = (Spinner) moveRowItem.findViewById(R.id.moveNameSpinner);
             int selectedPosition = moveNameSpinner.getSelectedItemPosition();
             MoveNameData moveNameData = ((MoveNameAdapter) moveNameSpinner.getAdapter())
                     .getMoveNameData(selectedPosition);
