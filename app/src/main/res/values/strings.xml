@@ -23,4 +23,5 @@
 
     <string name="workout_title">WORKOUT</string>
     <string name="workout_add">Add</string>
+    <string name="workout_remove">Remove</string>
 </resources>

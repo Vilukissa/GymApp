@@ -66,7 +66,7 @@ public class OperationHandle implements OnOperationCompleteListener {
             Log.debug("Returning success result to fragment");
             mExternalListener.onSuccess(result);
         }
-        if (!mUseCache && !mUsePersistentCache) {
+        if (!mUseCache && !mUsePersistentCache || (mIsActive && mUsePersistentCache)) {
             mOperationModel.removeHandle(mOperationId);
         }
     }
@@ -91,7 +91,6 @@ public class OperationHandle implements OnOperationCompleteListener {
         if (mResult instanceof RequestError) {
             Log.debug("Error was cached");
             returnErrorResult((RequestError) mResult);
-            mOperationModel.removeHandle(mOperationId);
 
         } else if (mResult != null) {
             Log.debug("Result was cached");

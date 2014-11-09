@@ -12,6 +12,7 @@ import com.calicode.gymapp.app.R;
 public abstract class NetworkRequestFragment extends BaseFragment {
 
     private static final String IS_ERROR_VISIBLE = "is_error_visible";
+    private static final String IS_PROGRESS_VISIBLE = "is_progress_visible";
 
     public abstract void errorOnClick();
 
@@ -36,6 +37,8 @@ public abstract class NetworkRequestFragment extends BaseFragment {
         if (savedInstanceState != null) {
             if (savedInstanceState.getBoolean(IS_ERROR_VISIBLE)) {
                 showError();
+            } else if (savedInstanceState.getBoolean(IS_PROGRESS_VISIBLE)) {
+                showProgress();
             }
         }
 
@@ -46,6 +49,7 @@ public abstract class NetworkRequestFragment extends BaseFragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean(IS_ERROR_VISIBLE, mError.getVisibility() == View.VISIBLE);
+        outState.putBoolean(IS_PROGRESS_VISIBLE, mProgress.getVisibility() == View.VISIBLE);
     }
 
     protected View getContentView() {

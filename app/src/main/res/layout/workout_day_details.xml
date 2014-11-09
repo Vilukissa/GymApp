@@ -6,38 +6,46 @@
     android:layout_height="match_parent"
     android:paddingTop="16dp" >
 
+    <include layout="@layout/common_error_and_progress_framelayout" />
+
     <LinearLayout
+        android:id="@+id/contentLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:orientation="horizontal">
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
 
-        <TextView
-            style="@style/Text28Black"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:singleLine="true"
-            android:text="@string/workout_title"/>
-
-        <TextView
-            android:id="@+id/workoutDayDate"
-            style="@style/Text20Black"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
-            android:singleLine="true"/>
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/Text28Black"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:text="@string/workout_title"/>
+
+            <TextView
+                android:id="@+id/workoutDayDate"
+                style="@style/Text20Black"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:singleLine="true"/>
+        </LinearLayout>
+
+        <ListView
+            android:id="@+id/workoutMoveList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clipToPadding="false"
+            android:divider="@color/list_divider_gray"
+            android:dividerHeight="1dp"
+            android:paddingBottom="16dp"/>
     </LinearLayout>
-
-    <ListView
-        android:id="@+id/workoutMoveList"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingBottom="16dp"
-        android:clipToPadding="false"
-        android:divider="@color/list_divider_gray"
-        android:dividerHeight="1dp"/>
-
 </LinearLayout>
