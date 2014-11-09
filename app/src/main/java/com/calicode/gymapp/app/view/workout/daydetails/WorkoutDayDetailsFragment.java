@@ -48,6 +48,10 @@ public class WorkoutDayDetailsFragment extends NetworkRequestFragment {
         ListView moveList = (ListView) view.findViewById(R.id.workoutMoveList);
         moveList.setAdapter(new MoveListAdapter(getActivity(), workoutDay.getMoveList()));
 
+        if (savedInstanceState != null) {
+            mRemovingWorkout = savedInstanceState.getBoolean(REMOVING_WORKOUT);
+        }
+
         setHasOptionsMenu(true);
 
         return view;
