@@ -8,6 +8,7 @@ import com.calicode.gymapp.app.model.logout.LogoutModel;
 import com.calicode.gymapp.app.model.workout.add.AddWorkoutDayModel;
 import com.calicode.gymapp.app.model.workout.days.WorkoutDaysModel;
 import com.calicode.gymapp.app.model.workout.movename.MoveNameModel;
+import com.calicode.gymapp.app.model.workout.remove.RemoveWorkoutDayModel;
 import com.calicode.gymapp.app.navigation.Navigator;
 import com.calicode.gymapp.app.network.VolleyHandler;
 import com.calicode.gymapp.app.util.Log;
@@ -87,7 +88,8 @@ public final class ComponentProvider implements ComponentInitializer {
         addComponent(new LoginModel());
         addComponent(new LogoutModel());
         addComponent(new WorkoutDaysModel());
-        addComponent(new AddWorkoutDayModel());
         addComponent(new MoveNameModel());
+        addComponent(new AddWorkoutDayModel());
+        addComponent(new RemoveWorkoutDayModel());
     }
 }

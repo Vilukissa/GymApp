@@ -14,7 +14,7 @@ public class WorkoutDay {
     private Date mDay;
 
     @JsonProperty("workoutId")
-    private String mWorkoutId;
+    private int mWorkoutId;
 
     @JsonProperty("moveList")
     private List<WorkoutMove> mMoveList = new ArrayList<WorkoutMove>();
@@ -24,7 +24,7 @@ public class WorkoutDay {
         return df.format(mDay);
     }
 
-    public String getWorkoutId() {
+    public int getWorkoutId() {
         return mWorkoutId;
     }
 
