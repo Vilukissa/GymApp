@@ -6,8 +6,8 @@
 /gradle
 
 # Android Studio
-/.idea/workspace.xml
-*/build/
+/.idea
+/build
 *.iml
 
 # Others

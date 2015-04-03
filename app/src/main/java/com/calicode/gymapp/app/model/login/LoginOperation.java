@@ -34,7 +34,7 @@ public class LoginOperation extends JsonOperation {
         Map<String, String> params = new HashMap<String, String>();
         params.put("username", mUserName);
         params.put("password", mPassword);
-        params.put("authToken", Encryption.generateLoginToken(mUserName, mPassword));
+        params.put("authToken", Encryption.generateLoginToken(mPassword));
         params.put("key", mAuthToken);
         return params;
     }

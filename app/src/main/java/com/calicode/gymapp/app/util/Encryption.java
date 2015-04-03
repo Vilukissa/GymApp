@@ -1,5 +1,6 @@
 package com.calicode.gymapp.app.util;
 
+import com.calicode.gymapp.app.Config;
 import com.calicode.gymapp.app.model.UserSessionManager;
 import com.calicode.gymapp.app.util.componentprovider.ComponentProvider;
 
@@ -24,12 +25,12 @@ public class Encryption {
     }
 
     public static String generateSharedKey() {
-        return "elephant_mother_and_father";
+        return md5("elephant_mother_and_father");
     }
 
-    public static String generateLoginToken(String username, String password) {
+    public static String generateLoginToken(String password) {
         String authToken = ComponentProvider.get().getComponent(UserSessionManager.class)
                 .getAuthenticationData().getAuthToken();
-        return md5(username + authToken + password);
+        return md5(Config.NOAHS_ARK + authToken + password);
     }
 }

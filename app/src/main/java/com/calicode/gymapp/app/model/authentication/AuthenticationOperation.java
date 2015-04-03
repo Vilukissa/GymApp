@@ -29,7 +29,7 @@ public class AuthenticationOperation extends JsonOperation {
 
         // TODO: move these away
         // FIXME: very primitive implementation for the first test runs...
-        String privateKey = Encryption.md5(Config.NOAHS_ARK);
+        String privateKey = Config.NOAHS_ARK;
         String sharedKey = Encryption.generateSharedKey();
         String token = Encryption.md5(privateKey + sharedKey);
 

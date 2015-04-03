@@ -1,8 +1,5 @@
 <resources>
 
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-    </style>
-
     <style name="CommonButton">
         <item name="android:background">@drawable/button_selector</item>
         <item name="android:textColor">@drawable/button_text_selector</item>

@@ -1,4 +1,4 @@
-apply plugin: 'android'
+apply plugin: 'com.android.application'
 
 android {
 
@@ -10,7 +10,7 @@ android {
     }
 
     compileSdkVersion 19
-    buildToolsVersion '19.0.3'
+    buildToolsVersion '19.1.0'
 
     defaultConfig {
         minSdkVersion 14
@@ -20,15 +20,14 @@ android {
     }
     buildTypes {
         release {
-            runProguard false
+            minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
         }
     }
 }
 
 dependencies {
-    compile 'com.android.support:support-v4:19.1.0'
-    compile 'com.android.support:appcompat-v7:+'
+    compile 'com.android.support:support-v4:21.0.3'
     compile files('libs/volley-1-0-6.jar')
     compile files('libs/jackson-annotations-2-4-2.jar')
     compile files('libs/jackson-core-2-4-2.jar')
